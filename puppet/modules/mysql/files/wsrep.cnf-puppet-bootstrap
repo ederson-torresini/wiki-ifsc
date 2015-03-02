@@ -1,0 +1,11 @@
+[mysqld]
+binlog_format=ROW
+default-storage-engine=innodb
+innodb_autoinc_lock_mode=2
+wsrep_provider=/usr/lib/libgalera_smm.so
+wsrep_provider_options="gcache.size=128M;gcache.page_size=256M"
+wsrep_cluster_name=galera
+wsrep_node_address=puppet
+wsrep_cluster_address=gcomm://
+wsrep_sst_method=rsync
+wsrep_sst_auth=wsrep-user:wsrep-password
