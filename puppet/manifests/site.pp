@@ -22,10 +22,14 @@ node "puppet" {
 		enable => true,
 	}
 
+	include gluster::bootstrap
+
 }
 
 node "wiki0" {
+	include gluster::common
 }
 
 node "wiki1" {
+	include gluster::common
 }
