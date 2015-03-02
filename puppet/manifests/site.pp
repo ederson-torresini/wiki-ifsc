@@ -9,6 +9,8 @@ service { 'puppet':
 	enable => true,
 }
 
+include ntp
+
 node "puppet" {
 
 	package { 'puppetmaster':
