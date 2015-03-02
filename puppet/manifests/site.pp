@@ -15,6 +15,11 @@ include mysql::cluster
 
 node "puppet" {
 
+	exec { 'garethr-docker':
+		command => '/usr/bin/puppet module install garethr-docker',
+		creates => '/etc/puppet/modules/docker/metadata.json',
+	}
+
 	package { 'puppetmaster':
 		ensure => installed,
 	}
