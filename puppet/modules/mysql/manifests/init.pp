@@ -55,7 +55,7 @@ class mysql::bootstrap {
 
 	file { 'my.cnf':
 		path => '/etc/mysql/my.cnf',
-		source => 'puppet:///modules/mysql/my.cnf-common',
+		source => 'puppet:///modules/mysql/my.cnf',
 		owner => root,
 		group => mysql,
 		mode => 0644,
@@ -120,7 +120,6 @@ class mysql::cluster inherits mysql::bootstrap {
 		source => $sourceCluster,
 	}
 
-
 	file { 'cluster.sql':
 		path => '/etc/mysql/cluster.sql',
 		source => 'puppet:///modules/mysql/cluster.sql',
@@ -135,6 +134,23 @@ class mysql::cluster inherits mysql::bootstrap {
 		require => [
 			Service['mysql'],
 			File['cluster.sql'],
+		],
+	}
+
+	file { 'haproxy.sql':
+		path => '/etc/mysql/haproxy.sql',
+		source => 'puppet:///modules/mysql/haproxy.sql',
+		owner => root,
+		group => mysql,
+		mode => 0640,
+		require => Package['mysql-wsrep-server'],
+	}
+
+	exec { 'mysql:users:haproxy':
+		command => '/usr/bin/mysql -u root < /etc/mysql/haproxy.sql',
+		require => [
+			Service['mysql'],
+			File['haproxy.sql'],
 		],
 	}
 

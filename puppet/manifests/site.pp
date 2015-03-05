@@ -15,11 +15,6 @@ include mysql::cluster
 
 node "puppet" {
 
-	exec { 'garethr-docker':
-		command => '/usr/bin/puppet module install garethr-docker',
-		creates => '/etc/puppet/modules/docker/metadata.json',
-	}
-
 	package { 'puppetmaster':
 		ensure => installed,
 	}
@@ -34,9 +29,15 @@ node "puppet" {
 }
 
 node "wiki0" {
+
 	include gluster::common
+	include docker::haproxy::mysql
+
 }
 
 node "wiki1" {
+
 	include gluster::common
+	include docker::haproxy::mysql
+
 }
