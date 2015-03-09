@@ -32,6 +32,7 @@ node "wiki0" {
 
 	include gluster::common
 	include docker::haproxy::mysql
+	include memcached::common
 
 }
 
@@ -39,5 +40,6 @@ node "wiki1" {
 
 	include gluster::common
 	include docker::haproxy::mysql
+	include memcached::common
 
 }
