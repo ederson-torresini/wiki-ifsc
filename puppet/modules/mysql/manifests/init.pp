@@ -51,6 +51,7 @@ class mysql::bootstrap {
 		command => '/usr/bin/killall -9 mysqld',
 		subscribe => Package['mysql-wsrep-server'],
 		refreshonly => true,
+		onlyif => '/bin/pidof mysqld',
 	}
 
 	file { 'my.cnf':
@@ -88,6 +89,24 @@ class mysql::bootstrap {
 			File['wsrep.cnf'],
 		],
 	}
+	file { 'init.sql':
+		path => '/etc/mysql/init.sql',
+		source => 'puppet:///modules/mysql/init.sql',
+		owner => root,
+		group => mysql,
+		mode => 0640,
+		require => Package['mysql-wsrep-server'],
+	}
+
+	exec { 'mysql:users:init':
+		command => '/usr/bin/mysql --user=root < /etc/mysql/init.sql',
+		require => [
+			File['init.sql'],
+		],
+		subscribe => Service['mysql'],
+		refreshonly => true,
+		onlyif => '/usr/bin/mysql --user=root -e "show variables"',
+	}
 
 	file { 'bootstrap.sql':
 		path => '/etc/mysql/bootstrap.sql',
@@ -99,10 +118,11 @@ class mysql::bootstrap {
 	}
 
 	exec { 'mysql:users:wsrep':
-		command => '/usr/bin/mysql -u root < /etc/mysql/bootstrap.sql',
+		command => '/usr/bin/mysql --user=root --password=root < /etc/mysql/bootstrap.sql',
 		require => [
 			Service['mysql'],
 			File['bootstrap.sql'],
+			Exec['mysql:users:init'],
 		],
 	}
 
@@ -130,10 +150,11 @@ class mysql::cluster inherits mysql::bootstrap {
 	}
 
 	exec { 'mysql:users:root':
-		command => '/usr/bin/mysql -u root < /etc/mysql/cluster.sql',
+		command => '/usr/bin/mysql --user=root --password=root < /etc/mysql/cluster.sql',
 		require => [
 			Service['mysql'],
 			File['cluster.sql'],
+			Exec['mysql:users:init'],
 		],
 	}
 
@@ -147,7 +168,7 @@ class mysql::cluster inherits mysql::bootstrap {
 	}
 
 	exec { 'mysql:users:haproxy':
-		command => '/usr/bin/mysql -u root < /etc/mysql/haproxy.sql',
+		command => '/usr/bin/mysql --user=root --password=root < /etc/mysql/haproxy.sql',
 		require => [
 			Service['mysql'],
 			File['haproxy.sql'],

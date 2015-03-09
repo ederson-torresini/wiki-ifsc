@@ -1,3 +1,2 @@
-GRANT ALL ON *.* TO 'root'@'puppet';
-GRANT ALL ON *.* TO 'root'@'wiki0';
-GRANT ALL ON *.* TO 'root'@'wiki1';
+GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY 'root';
+FLUSH PRIVILEGES;
