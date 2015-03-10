@@ -1,5 +1,3 @@
-# site.pp
-
 package { 'puppet':
 	ensure => installed,
 }
@@ -7,6 +5,10 @@ package { 'puppet':
 service { 'puppet':
 	ensure => running,
 	enable => true,
+}
+
+package { 'git':
+	ensure => installed,
 }
 
 include ntp
@@ -33,6 +35,11 @@ node "wiki0" {
 	include gluster::common
 	include docker::haproxy::mysql
 	include docker::memcached
+	include docker::php-fpm::0
+	include docker::php-fpm::1
+	include docker::nginx::0
+	include docker::nginx::1
+	include www::mediawiki
 
 }
 
@@ -41,5 +48,10 @@ node "wiki1" {
 	include gluster::common
 	include docker::haproxy::mysql
 	include docker::memcached
+	include docker::php-fpm::0
+	include docker::php-fpm::1
+	include docker::nginx::0
+	include docker::nginx::1
+	include www::mediawiki
 
 }
