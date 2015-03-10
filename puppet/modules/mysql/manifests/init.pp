@@ -1,5 +1,3 @@
-# Galera MySQL init.pp
-
 class mysql::bootstrap {
 
 	package { 'lsof':

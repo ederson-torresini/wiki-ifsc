@@ -1,5 +1,3 @@
-# Gluster init.pp
-
 class gluster::common {
 
 	file { 'fdisk:vdb1':

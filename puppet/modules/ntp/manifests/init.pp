@@ -1,5 +1,3 @@
-# NTP init.pp
-
 class ntp {
 
 	package { 'ntp':
