@@ -181,8 +181,8 @@ class docker::php-fpm inherits docker {
 		path => '/media/wall0/php-fpm',
 		ensure => directory,
 		owner => root,
-		group => root,
-		mode => 0755,
+		group => www-data,
+		mode => 0750,
 		require => Exec['mount:wall0'],
 	}
 
@@ -190,8 +190,8 @@ class docker::php-fpm inherits docker {
 		path => '/media/wall0/php-fpm/sessions',
 		ensure => directory,
 		owner => root,
-		group => root,
-		mode => 1777,
+		group => www-data,
+		mode => 0770,
 		require => File['media:wall0:php-fpm'],
 	}
 
@@ -225,13 +225,14 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:php-fpm:latest:0':
-		command => '/usr/bin/docker run -d -p 8020:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html/wiki:/var/www/html/wiki:ro --name="php-fpm_latest_0" php-fpm:latest',
+		command => '/usr/bin/docker run -d -p 8020:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html/wiki:/var/www/html/wiki:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="php-fpm_latest_0" php-fpm:latest',
 		require => [
 			Exec['docker:rm:php-fpm:latest:0'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
 			File['media:wall0:php-fpm:sessions'],
-			File['var:www:html'],
+			Exec['git:mediawiki:skin:vector'],
+			File['media:wall0:www:images']
 		],
 		unless => '/usr/bin/docker top php-fpm_latest_0', # não está rodando
 	}
@@ -258,13 +259,14 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:php-fpm:latest:1':
-		command => '/usr/bin/docker run -d -p 8021:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html/wiki:/var/www/html/wiki:ro --name="php-fpm_latest_1" php-fpm:latest',
+		command => '/usr/bin/docker run -d -p 8021:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html/wiki:/var/www/html/wiki:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="php-fpm_latest_1" php-fpm:latest',
 		require => [
 			Exec['docker:rm:php-fpm:latest:0'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
 			File['media:wall0:php-fpm:sessions'],
-			File['var:www:html'],
+			Exec['git:mediawiki:skin:vector'],
+			File['media:wall0:www:images']
 		],
 		unless => '/usr/bin/docker top php-fpm_latest_1', # não está rodando
 	}
@@ -339,12 +341,13 @@ class docker::nginx::0 inherits docker::nginx {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:nginx:latest:0':
-		command => '/usr/bin/docker run -d -p 8010:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro -v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro -v /var/www/html/wiki:/var/www/html/wiki:ro --name="nginx_latest_0" nginx:latest',
+		command => '/usr/bin/docker run -d -p 8010:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro -v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro -v /var/www/html/wiki:/var/www/html/wiki:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="nginx_latest_0" nginx:latest',
 		require => [
 			Exec['docker:rm:nginx:latest:0'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
-			File['var:www:html'],
+			Exec['git:mediawiki:skin:vector'],
+			File['media:wall0:www:images']
 		],
 		unless => '/usr/bin/docker top nginx_latest_0', # não está rodando
 	}
@@ -371,12 +374,13 @@ class docker::nginx::1 inherits docker::nginx {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:nginx:latest:1':
-		command => '/usr/bin/docker run -d -p 8011:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro -v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro -v /var/www/html/wiki:/var/www/html/wiki:ro --name="nginx_latest_1" nginx:latest',
+		command => '/usr/bin/docker run -d -p 8011:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro -v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro -v /var/www/html/wiki:/var/www/html/wiki:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="nginx_latest_1" nginx:latest',
 		require => [
 			Exec['docker:rm:nginx:latest:1'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
-			File['var:www:html'],
+			Exec['git:mediawiki:skin:vector'],
+			File['media:wall0:www:images']
 		],
 		unless => '/usr/bin/docker top nginx_latest_1', # não está rodando
 	}
