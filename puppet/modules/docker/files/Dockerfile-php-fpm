@@ -5,6 +5,7 @@ MAINTAINER Ederson Torresini <boidacarapreta@gmail.com>
 
 RUN	apt-get update && \
 	apt-get -y upgrade && \
+	apt-get install -y git && \
 	apt-get install -y php5-fpm && \
 	apt-get install -y php5-memcached && \
 	apt-get install -y php5-apcu && \

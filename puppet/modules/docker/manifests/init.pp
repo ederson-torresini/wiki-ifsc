@@ -13,11 +13,6 @@ class docker {
 		require => Package['docker.io'],
 	}
 
-	schedule { 'diario':
-		period => daily,
-		repeat => 1,
-	}
-
 }
 
 class docker::haproxy inherits docker {
@@ -43,8 +38,9 @@ class docker::haproxy inherits docker {
 	exec { 'docker:build:haproxy:latest':
 		command => '/usr/bin/docker build -t haproxy:latest .',
 		cwd => '/etc/docker/haproxy',
-		require => File['etc:docker:haproxy:Dockerfile'],
-		schedule => 'diario',
+		subscribe => File['etc:docker:haproxy:Dockerfile'],
+		refreshonly => true,
+		timeout => 600,
 	}
 
 }
@@ -60,10 +56,18 @@ class docker::haproxy::mysql inherits docker::haproxy {
 		require => File['etc:docker:haproxy'],
 	}
 
+	# Para contêiner desatualizado
+	exec { 'docker:stop:haproxy:mysql':
+		command => '/usr/bin/docker stop haproxy_mysql',
+		subscribe => Exec['docker:build:haproxy:latest'],
+		refreshonly => true,
+		onlyif => '/usr/bin/docker top haproxy_mysql',
+	}
+
 	# Remove contêiner parado
 	exec { 'docker:rm:haproxy:mysql':
 		command => '/usr/bin/docker rm haproxy_mysql',
-		require => Exec['docker:build:haproxy:latest'],
+		require => Exec['docker:stop:haproxy:mysql'],
 		unless => '/usr/bin/docker top haproxy_mysql', # não está rodando
 		onlyif => '/usr/bin/docker diff haproxy_mysql', # contêiner existe (mesmo parado)
 	}
@@ -72,7 +76,6 @@ class docker::haproxy::mysql inherits docker::haproxy {
 	exec { 'docker:run:haproxy:mysql':
 		command => '/usr/bin/docker run -d -p 13306:3306 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/haproxy/mysql.cfg:/etc/haproxy/haproxy.cfg:ro --name="haproxy_mysql" haproxy:latest',
 		require => [
-			Exec['docker:build:haproxy:latest'],
 			Exec['docker:rm:haproxy:mysql'],
 			File['docker:haproxy:mysql:haproxy.cfg'],
 		],
@@ -104,14 +107,23 @@ class docker::memcached inherits docker {
 	exec { 'docker:build:memcached:latest':
 		command => '/usr/bin/docker build -t memcached:latest .',
 		cwd => '/etc/docker/memcached',
-		require => File['etc:docker:memcached:Dockerfile'],
-		schedule => 'diario',
+		subscribe => File['etc:docker:memcached:Dockerfile'],
+		refreshonly => true,
+		timeout => 600,
+	}
+
+	# Para contêiner desatualizado
+	exec { 'docker:stop:memcached:latest':
+		command => '/usr/bin/docker stop memcached_latest',
+		subscribe => Exec['docker:build:memcached:latest'],
+		refreshonly => true,
+		onlyif => '/usr/bin/docker top memcached_latest',
 	}
 
 	# Remove contêiner parado
 	exec { 'docker:rm:memcached:latest':
 		command => '/usr/bin/docker rm memcached_latest',
-		require => Exec['docker:build:memcached:latest'],
+		require => Exec['docker:stop:memcached:latest'],
 		unless => '/usr/bin/docker top memcached_latest', # não está rodando
 		onlyif => '/usr/bin/docker diff memcached_latest', # contêiner existe (mesmo parado)
 	}
@@ -120,7 +132,6 @@ class docker::memcached inherits docker {
 	exec { 'docker:run:memcached:latest':
 		command => '/usr/bin/docker run -d -p 11211:11211 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw --name="memcached_latest" memcached:latest /usr/bin/memcached -u memcache -m 256',
 		require => [
-			Exec['docker:build:memcached:latest'],
 			Exec['docker:rm:memcached:latest'],
 		],
 		unless => '/usr/bin/docker top memcached_latest', # não está rodando
@@ -187,18 +198,27 @@ class docker::php-fpm inherits docker {
 	exec { 'docker:build:php-fpm:latest':
 		command => '/usr/bin/docker build -t php-fpm:latest .',
 		cwd => '/etc/docker/php-fpm',
-		require => File['etc:docker:php-fpm:Dockerfile'],
-		schedule => 'diario',
+		subscribe => File['etc:docker:php-fpm:Dockerfile'],
+		refreshonly => true,
+		timeout => 600,
 	}
 
 }
 
 class docker::php-fpm::0 inherits docker::php-fpm {
 	
+	# Para contêiner desatualizado
+	exec { 'docker:stop:php-fpm:latest:0':
+		command => '/usr/bin/docker stop php-fpm_latest_0',
+		subscribe => Exec['docker:build:php-fpm:latest'],
+		refreshonly => true,
+		onlyif => '/usr/bin/docker top nginx_latest_0',
+	}
+
 	# Remove contêiner parado
 	exec { 'docker:rm:php-fpm:latest:0':
 		command => '/usr/bin/docker rm php-fpm_latest_0',
-		require => Exec['docker:build:php-fpm:latest'],
+		require => Exec['docker:stop:php-fpm:latest:0'],
 		unless => '/usr/bin/docker top php-fpm_latest_0', # não está rodando
 		onlyif => '/usr/bin/docker diff php-fpm_latest_0', # contêiner existe (mesmo parado)
 	}
@@ -207,7 +227,6 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 	exec { 'docker:run:php-fpm:latest:0':
 		command => '/usr/bin/docker run -d -p 8020:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html/wiki:/var/www/html/wiki:ro --name="php-fpm_latest_0" php-fpm:latest',
 		require => [
-			Exec['docker:build:php-fpm:latest'],
 			Exec['docker:rm:php-fpm:latest:0'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
@@ -221,10 +240,18 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 
 class docker::php-fpm::1 inherits docker::php-fpm {
 	
+	# Para contêiner desatualizado
+	exec { 'docker:stop:php-fpm:latest:1':
+		command => '/usr/bin/docker stop php-fpm_latest_1',
+		subscribe => Exec['docker:build:php-fpm:latest'],
+		refreshonly => true,
+		onlyif => '/usr/bin/docker top nginx_latest_1',
+	}
+
 	# Remove contêiner parado
 	exec { 'docker:rm:php-fpm:latest:1':
 		command => '/usr/bin/docker rm php-fpm_latest_1',
-		require => Exec['docker:build:php-fpm:latest'],
+		require => Exec['docker:stop:php-fpm:latest:1'],
 		unless => '/usr/bin/docker top php-fpm_latest_1', # não está rodando
 		onlyif => '/usr/bin/docker diff php-fpm_latest_1', # contêiner existe (mesmo parado)
 	}
@@ -233,7 +260,6 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 	exec { 'docker:run:php-fpm:latest:1':
 		command => '/usr/bin/docker run -d -p 8021:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html/wiki:/var/www/html/wiki:ro --name="php-fpm_latest_1" php-fpm:latest',
 		require => [
-			Exec['docker:build:php-fpm:latest'],
 			Exec['docker:rm:php-fpm:latest:0'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
@@ -286,18 +312,27 @@ class docker::nginx inherits docker {
 	exec { 'docker:build:nginx:latest':
 		command => '/usr/bin/docker build -t nginx:latest .',
 		cwd => '/etc/docker/nginx',
-		require => File['etc:docker:nginx:Dockerfile'],
-		schedule => 'diario',
+		subscribe => File['etc:docker:nginx:Dockerfile'],
+		refreshonly => true,
+		timeout => 600,
 	}
 
 }
 
 class docker::nginx::0 inherits docker::nginx {
 	
+	# Para contêiner desatualizado
+	exec { 'docker:stop:nginx:latest:0':
+		command => '/usr/bin/docker stop nginx_latest_0',
+		subscribe => Exec['docker:build:nginx:latest'],
+		refreshonly => true,
+		onlyif => '/usr/bin/docker top nginx_latest_0',
+	}
+
 	# Remove contêiner parado
 	exec { 'docker:rm:nginx:latest:0':
 		command => '/usr/bin/docker rm nginx_latest_0',
-		require => Exec['docker:build:nginx:latest'],
+		require => Exec['docker:stop:nginx:latest:0'],
 		unless => '/usr/bin/docker top nginx_latest_0', # não está rodando
 		onlyif => '/usr/bin/docker diff nginx_latest_0', # contêiner existe (mesmo parado)
 	}
@@ -306,7 +341,6 @@ class docker::nginx::0 inherits docker::nginx {
 	exec { 'docker:run:nginx:latest:0':
 		command => '/usr/bin/docker run -d -p 8010:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro -v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro -v /var/www/html/wiki:/var/www/html/wiki:ro --name="nginx_latest_0" nginx:latest',
 		require => [
-			Exec['docker:build:nginx:latest'],
 			Exec['docker:rm:nginx:latest:0'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
@@ -318,11 +352,19 @@ class docker::nginx::0 inherits docker::nginx {
 }
 
 class docker::nginx::1 inherits docker::nginx {
+
+	# Para contêiner desatualizado
+	exec { 'docker:stop:nginx:latest:1':
+		command => '/usr/bin/docker stop nginx_latest_1',
+		subscribe => Exec['docker:build:nginx:latest'],
+		refreshonly => true,
+		onlyif => '/usr/bin/docker top nginx_latest_1',
+	}
 	
 	# Remove contêiner parado
 	exec { 'docker:rm:nginx:latest:1':
 		command => '/usr/bin/docker rm nginx_latest_1',
-		require => Exec['docker:build:nginx:latest'],
+		require => Exec['docker:stop:nginx:latest:1'],
 		unless => '/usr/bin/docker top nginx_latest_1', # não está rodando
 		onlyif => '/usr/bin/docker diff nginx_latest_1', # contêiner existe (mesmo parado)
 	}
@@ -331,7 +373,6 @@ class docker::nginx::1 inherits docker::nginx {
 	exec { 'docker:run:nginx:latest:1':
 		command => '/usr/bin/docker run -d -p 8011:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro -v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro -v /var/www/html/wiki:/var/www/html/wiki:ro --name="nginx_latest_1" nginx:latest',
 		require => [
-			Exec['docker:build:nginx:latest'],
 			Exec['docker:rm:nginx:latest:1'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
