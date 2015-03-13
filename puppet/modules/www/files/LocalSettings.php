@@ -32,7 +32,7 @@ $wgUsePathInfo = true;
 $wgScriptExtension = ".php";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "http://localhost:8010";
+$wgServer = "http://wiki.openstack.sj.ifsc.edu.br";
 
 ## The relative URL path to the skins directory
 $wgStylePath = "$wgScriptPath/skins";
@@ -131,3 +131,14 @@ $wgGroupPermissions['*']['edit'] = false;
 
 # Tema padrão: Vector.
 require_once "$IP/skins/Vector/Vector.php";
+
+# Armazenamento da sessão no banco de dados ao invés de arquivo.
+#$wgSessionHandler = 'session_mysql';
+#$wgSessionsInObjectCache = true;
+#$wgSessionCacheType = CACHE_DB;
+
+# Visual Editor
+#require_once "$IP/extensions/VisualEditor/VisualEditor.php";
+#$wgDefaultUserOptions['visualeditor-enable'] = 1;
+#$wgHiddenPrefs[] = 'visualeditor-enable';
+#$wgDefaultUserOptions['visualeditor-enable-experimental'] = 1;

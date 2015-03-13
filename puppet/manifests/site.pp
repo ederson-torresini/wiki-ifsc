@@ -39,6 +39,8 @@ node "wiki0" {
 	include docker::php-fpm::1
 	include docker::nginx::0
 	include docker::nginx::1
+	include docker::varnish
+	include docker::haproxy::varnish
 	include www::mediawiki
 
 }
@@ -52,6 +54,8 @@ node "wiki1" {
 	include docker::php-fpm::1
 	include docker::nginx::0
 	include docker::nginx::1
+	include docker::varnish
+	include docker::haproxy::varnish
 	include www::mediawiki
 
 }
