@@ -59,7 +59,10 @@ class docker::haproxy::mysql inherits docker::haproxy {
 	# Para contêiner desatualizado
 	exec { 'docker:stop:haproxy:mysql':
 		command => '/usr/bin/docker stop haproxy_mysql',
-		subscribe => Exec['docker:build:haproxy:latest'],
+		subscribe => [
+			Exec['docker:build:haproxy:latest'],
+			File['docker:haproxy:mysql:haproxy.cfg'],
+		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top haproxy_mysql',
 	}
@@ -210,7 +213,11 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 	# Para contêiner desatualizado
 	exec { 'docker:stop:php-fpm:latest:0':
 		command => '/usr/bin/docker stop php-fpm_latest_0',
-		subscribe => Exec['docker:build:php-fpm:latest'],
+		subscribe => [
+			Exec['docker:build:php-fpm:latest'],
+			File['etc:docker:php-fpm:php.ini'],
+			File['etc:docker:php-fpm:www.conf'],
+		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top nginx_latest_0',
 	}
@@ -244,7 +251,11 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 	# Para contêiner desatualizado
 	exec { 'docker:stop:php-fpm:latest:1':
 		command => '/usr/bin/docker stop php-fpm_latest_1',
-		subscribe => Exec['docker:build:php-fpm:latest'],
+		subscribe => [
+			Exec['docker:build:php-fpm:latest'],
+			File['etc:docker:php-fpm:php.ini'],
+			File['etc:docker:php-fpm:www.conf'],
+		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top nginx_latest_1',
 	}
@@ -326,7 +337,11 @@ class docker::nginx::0 inherits docker::nginx {
 	# Para contêiner desatualizado
 	exec { 'docker:stop:nginx:latest:0':
 		command => '/usr/bin/docker stop nginx_latest_0',
-		subscribe => Exec['docker:build:nginx:latest'],
+		subscribe => [
+			Exec['docker:build:nginx:latest'],
+			File['etc:docker:nginx:nginx.conf'],
+			File['etc:docker:nginx:fastcgi_params'],
+		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top nginx_latest_0',
 	}
@@ -359,7 +374,11 @@ class docker::nginx::1 inherits docker::nginx {
 	# Para contêiner desatualizado
 	exec { 'docker:stop:nginx:latest:1':
 		command => '/usr/bin/docker stop nginx_latest_1',
-		subscribe => Exec['docker:build:nginx:latest'],
+		subscribe => [
+			Exec['docker:build:nginx:latest'],
+			File['etc:docker:nginx:nginx.conf'],
+			File['etc:docker:nginx:fastcgi_params'],
+		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top nginx_latest_1',
 	}

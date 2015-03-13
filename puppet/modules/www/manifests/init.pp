@@ -78,8 +78,9 @@ class www::mediawiki inherits www {
 		group => www-data,
 		mode => 0440,
 		require => [
-			Exec['git:mediawiki'],
+			Exec['git:mediawiki:skin:vector'],
 			Exec['mysql:mediawiki'],
+			File['media:wall0:www:images'],
 		],
 	}
 
