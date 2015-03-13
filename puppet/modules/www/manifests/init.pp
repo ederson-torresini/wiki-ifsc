@@ -83,14 +83,5 @@ class www::mediawiki inherits www {
 			File['media:wall0:www:images'],
 		],
 	}
-	
-	file { 'index.html':
-		path => '/var/www/html/index.html',
-		source => 'puppet:///modules/www/index.html',
-		owner => root,
-		group => root,
-		mode => 0444,
-		require => File['var:www:html'],
-	}
 
 }
