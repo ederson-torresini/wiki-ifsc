@@ -3,7 +3,9 @@
 FROM debian:testing
 MAINTAINER Ederson Torresini <boidacarapreta@gmail.com>
 
-RUN	apt-get update && \
+RUN	echo "deb http://debian.pop-sc.rnp.br/debian/ testing main contrib non-free" > /etc/apt/sources.list && \
+	echo "deb http://security.debian.org/ testing/updates main contrib non-free" >> /etc/apt/sources.list && \
+	apt-get update && \
 	apt-get -y upgrade && \
 	apt-get install -y varnish && \
 	apt-get clean && \
