@@ -332,6 +332,40 @@ class docker::nginx inherits docker {
 
 }
 
+class docker::nginx::shibboleth inherits docker::nginx {
+
+	#File <| title == 'sysctl.conf' |> {
+	#	source => 'puppet:///modules/openstack-neutron-agent/sysctl-compute.conf',
+	#}
+
+	file { 'etc:docker:nginx:shibboleth':
+		path => '/etc/docker/nginx/shibboleth',
+		ensure => directory,
+		owner => root,
+		group => root,
+		mode => 0750,
+		require => File['etc:docker:nginx'],
+	}
+	
+	file { 'etc:docker:nginx:shibboleth:Dockerfile':
+		path => '/etc/docker/nginx/shibboleth/Dockerfile',
+		source => 'puppet:///modules/docker/Dockerfile-nginx-shibboleth',
+		owner => root,
+		group => root,
+		mode => 0640,
+		require => File['etc:docker:nginx:shibboleth'],
+	}
+
+	exec { 'docker:build:nginx:shibboleth':
+		command => '/usr/bin/docker build -t nginx:shibboleth .',
+		cwd => '/etc/docker/nginx/shibboleth',
+		subscribe => File['etc:docker:nginx:shibboleth:Dockerfile'],
+		refreshonly => true,
+		timeout => 600,
+	}
+
+}
+
 class docker::nginx::0 inherits docker::nginx {
 	
 	# Para contêiner desatualizado
