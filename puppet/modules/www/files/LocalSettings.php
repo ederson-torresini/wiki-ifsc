@@ -32,7 +32,7 @@ $wgUsePathInfo = true;
 $wgScriptExtension = ".php";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "http://wiki.openstack.sj.ifsc.edu.br";
+$wgServer = "http://200.135.233.70";
 
 ## The relative URL path to the skins directory
 $wgStylePath = "$wgScriptPath/skins";
@@ -55,7 +55,7 @@ $wgEmailAuthentication = false;
 
 ## Database settings
 $wgDBtype = "mysql";
-$wgDBserver = "wiki0";
+$wgDBserver = "wiki0:13306";
 $wgDBname = "mediawiki";
 $wgDBuser = "mediawiki";
 $wgDBpassword = "mediawiki";
