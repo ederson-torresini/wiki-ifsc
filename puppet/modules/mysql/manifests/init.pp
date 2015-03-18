@@ -79,10 +79,8 @@ class mysql::bootstrap {
 	service { 'mysql':
 		ensure => running,
 		enable => true,
-		require => [
-			Exec['killall:mysqld'],
-		],
 		subscribe => [
+			Exec['killall:mysqld'],
 			File['my.cnf'],
 			File['wsrep.cnf'],
 		],
