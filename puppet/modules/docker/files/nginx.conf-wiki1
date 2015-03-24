@@ -30,10 +30,10 @@ http {
 	gzip_disable "msie6";
 
 	upstream php-fpm {
-		server wiki0:8020 max_fails=5 fail_timeout=2;
-		server wiki0:8021 max_fails=5 fail_timeout=2;
-		server wiki1:8020 max_fails=5 fail_timeout=2;
-		server wiki1:8021 max_fails=5 fail_timeout=2;
+		server wiki0:8020 max_fails=3 fail_timeout=2 backup;
+		server wiki0:8021 max_fails=3 fail_timeout=2 backup;
+		server wiki1:8020 max_fails=3 fail_timeout=2;
+		server wiki1:8021 max_fails=3 fail_timeout=2;
 	}
 
 	server {

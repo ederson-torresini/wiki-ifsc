@@ -40,7 +40,7 @@ class docker::haproxy inherits docker {
 		cwd => '/etc/docker/haproxy',
 		subscribe => File['etc:docker:haproxy:Dockerfile'],
 		refreshonly => true,
-		timeout => 600,
+		timeout => 900,
 	}
 
 }
@@ -112,7 +112,7 @@ class docker::memcached inherits docker {
 		cwd => '/etc/docker/memcached',
 		subscribe => File['etc:docker:memcached:Dockerfile'],
 		refreshonly => true,
-		timeout => 600,
+		timeout => 900,
 	}
 
 	# Para contêiner desatualizado
@@ -203,7 +203,7 @@ class docker::php-fpm inherits docker {
 		cwd => '/etc/docker/php-fpm',
 		subscribe => File['etc:docker:php-fpm:Dockerfile'],
 		refreshonly => true,
-		timeout => 600,
+		timeout => 900,
 	}
 
 }
@@ -304,9 +304,14 @@ class docker::nginx inherits docker {
 		require => File['etc:docker:nginx'],
 	}
 
+	$source = $hostname ? {
+		'wiki0' => 'puppet:///modules/docker/nginx.conf-wiki0',
+		'wiki1' => 'puppet:///modules/docker/nginx.conf-wiki1',
+	}
+
 	file { 'etc:docker:nginx:nginx.conf':
 		path => '/etc/docker/nginx/nginx.conf',
-		source => 'puppet:///modules/docker/nginx.conf',
+		source => $source,
 		owner => root,
 		group => root,
 		mode => 0644,
@@ -327,16 +332,12 @@ class docker::nginx inherits docker {
 		cwd => '/etc/docker/nginx',
 		subscribe => File['etc:docker:nginx:Dockerfile'],
 		refreshonly => true,
-		timeout => 600,
+		timeout => 900,
 	}
 
 }
 
 class docker::nginx::shibboleth inherits docker::nginx {
-
-	#File <| title == 'sysctl.conf' |> {
-	#	source => 'puppet:///modules/openstack-neutron-agent/sysctl-compute.conf',
-	#}
 
 	file { 'etc:docker:nginx:shibboleth':
 		path => '/etc/docker/nginx/shibboleth',
@@ -361,13 +362,13 @@ class docker::nginx::shibboleth inherits docker::nginx {
 		cwd => '/etc/docker/nginx/shibboleth',
 		subscribe => File['etc:docker:nginx:shibboleth:Dockerfile'],
 		refreshonly => true,
-		timeout => 600,
+		timeout => 900,
 	}
 
 }
 
 class docker::nginx::0 inherits docker::nginx {
-	
+
 	# Para contêiner desatualizado
 	exec { 'docker:stop:nginx:latest:0':
 		command => '/usr/bin/docker stop nginx_latest_0',
@@ -465,12 +466,17 @@ class docker::varnish inherits docker {
 		cwd => '/etc/docker/varnish',
 		subscribe => File['etc:docker:varnish:Dockerfile'],
 		refreshonly => true,
-		timeout => 600,
+		timeout => 900,
+	}
+
+	$source = $hostname ? {
+		'wiki0' => 'puppet:///modules/docker/default.vcl-wiki0',
+		'wiki1' => 'puppet:///modules/docker/default.vcl-wiki1',
 	}
 
 	file { 'docker:varnish:latest:default.vcl':
 		path => '/etc/docker/varnish/default.vcl',
-		source => 'puppet:///modules/docker/default.vcl',
+		source => $source,
 		owner => root,
 		group => root,
 		mode => 0644,
@@ -498,7 +504,7 @@ class docker::varnish inherits docker {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:varnish:latest':
-		command => '/usr/bin/docker run -d -p 8000:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/varnish/default.vcl:/etc/varnish/default.vcl:ro --name="varnish_latest" varnish:latest',
+		command => '/usr/bin/docker run -d -p 8000:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/varnish/default.vcl:/etc/varnish/default.vcl:ro --name="varnish_latest" varnish:latest /usr/sbin/varnishd -F -a :80 -s malloc,256M -p thread_pools=2 -p thread_pool_min=400 -p thread_pool_max=1000 -f /etc/varnish/default.vcl',
 		require => [
 			Exec['docker:rm:varnish:latest'],
 			File['docker:varnish:latest:default.vcl'],
