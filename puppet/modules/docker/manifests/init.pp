@@ -40,7 +40,7 @@ class docker::haproxy inherits docker {
 		cwd => '/etc/docker/haproxy',
 		subscribe => File['etc:docker:haproxy:Dockerfile'],
 		refreshonly => true,
-		timeout => 900,
+		timeout => 1800,
 	}
 
 }
@@ -112,7 +112,7 @@ class docker::memcached inherits docker {
 		cwd => '/etc/docker/memcached',
 		subscribe => File['etc:docker:memcached:Dockerfile'],
 		refreshonly => true,
-		timeout => 900,
+		timeout => 1800,
 	}
 
 	# Para contêiner desatualizado
@@ -203,7 +203,7 @@ class docker::php-fpm inherits docker {
 		cwd => '/etc/docker/php-fpm',
 		subscribe => File['etc:docker:php-fpm:Dockerfile'],
 		refreshonly => true,
-		timeout => 900,
+		timeout => 1800,
 	}
 
 }
@@ -327,7 +327,7 @@ class docker::nginx inherits docker {
 		cwd => '/etc/docker/nginx',
 		subscribe => File['etc:docker:nginx:Dockerfile'],
 		refreshonly => true,
-		timeout => 900,
+		timeout => 1800,
 	}
 
 }
@@ -357,7 +357,7 @@ class docker::nginx::shibboleth inherits docker::nginx {
 		cwd => '/etc/docker/nginx/shibboleth',
 		subscribe => File['etc:docker:nginx:shibboleth:Dockerfile'],
 		refreshonly => true,
-		timeout => 900,
+		timeout => 1800,
 	}
 
 }
@@ -461,7 +461,7 @@ class docker::varnish inherits docker {
 		cwd => '/etc/docker/varnish',
 		subscribe => File['etc:docker:varnish:Dockerfile'],
 		refreshonly => true,
-		timeout => 900,
+		timeout => 1800,
 	}
 
 	file { 'docker:varnish:latest:default.vcl':

@@ -12,8 +12,8 @@ package { 'git':
 }
 
 include ntp
-#include mysql::bootstrap
-include mysql::cluster
+include mysql::bootstrap
+#include mysql::cluster
 
 node "puppet" {
 

@@ -71,17 +71,17 @@ class www::mediawiki inherits www {
 	# Poderia ser automatizado, mas como gera alguns valores próprios,
 	# como por exemplo timestamp das modificações e chaves secretas,
 	# convém realizar o processo na forma interativa.
-	file { 'LocalSettings.php':
-		path => '/var/www/html/wiki/LocalSettings.php',
-		source => 'puppet:///modules/www/LocalSettings.php',
-		owner => root,
-		group => www-data,
-		mode => 0440,
-		require => [
-			Exec['git:mediawiki:skin:vector'],
-			Exec['mysql:mediawiki'],
-			File['media:wall0:www:images'],
-		],
-	}
+	#file { 'LocalSettings.php':
+	#	path => '/var/www/html/wiki/LocalSettings.php',
+	#	source => 'puppet:///modules/www/LocalSettings.php',
+	#	owner => root,
+	#	group => www-data,
+	#	mode => 0440,
+	#	require => [
+	#		Exec['git:mediawiki:skin:vector'],
+	#		Exec['mysql:mediawiki'],
+	#		File['media:wall0:www:images'],
+	#	],
+	#}
 
 }
