@@ -87,6 +87,7 @@ class gluster::common {
 	exec { 'mount:wall0':
 		command => '/bin/mount -a -t glusterfs',
 		require => [
+			Package['glusterfs-client'],
 			Exec['fstab:wall0'],
 			File['dir:media:wall0'],
 		],

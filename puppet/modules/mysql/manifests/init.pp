@@ -85,6 +85,7 @@ class mysql::bootstrap {
 			File['wsrep.cnf'],
 		],
 	}
+	
 	file { 'init.sql':
 		path => '/etc/mysql/init.sql',
 		source => 'puppet:///modules/mysql/init.sql',
