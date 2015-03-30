@@ -54,8 +54,8 @@ sub vcl_init {
 	new nginx = directors.hash();
 	nginx.add_backend(nginx0_8010, 1.0);
 	nginx.add_backend(nginx0_8011, 1.0);
-	nginx.add_backend(nginx1_8010, 5.0);
-	nginx.add_backend(nginx1_8011, 5.0);
+	nginx.add_backend(nginx1_8010, 1.0);
+	nginx.add_backend(nginx1_8011, 1.0);
 }
 
 sub vcl_recv {

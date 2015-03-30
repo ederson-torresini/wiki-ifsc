@@ -304,14 +304,9 @@ class docker::nginx inherits docker {
 		require => File['etc:docker:nginx'],
 	}
 
-	$source = $hostname ? {
-		'wiki0' => 'puppet:///modules/docker/nginx.conf-wiki0',
-		'wiki1' => 'puppet:///modules/docker/nginx.conf-wiki1',
-	}
-
 	file { 'etc:docker:nginx:nginx.conf':
 		path => '/etc/docker/nginx/nginx.conf',
-		source => $source,
+		source => 'puppet:///modules/docker/nginx.conf',
 		owner => root,
 		group => root,
 		mode => 0644,
@@ -469,14 +464,9 @@ class docker::varnish inherits docker {
 		timeout => 900,
 	}
 
-	$source = $hostname ? {
-		'wiki0' => 'puppet:///modules/docker/default.vcl-wiki0',
-		'wiki1' => 'puppet:///modules/docker/default.vcl-wiki1',
-	}
-
 	file { 'docker:varnish:latest:default.vcl':
 		path => '/etc/docker/varnish/default.vcl',
-		source => $source,
+		source => 'puppet:///modules/docker/default.vcl',
 		owner => root,
 		group => root,
 		mode => 0644,
