@@ -43,13 +43,18 @@ class docker::haproxy inherits docker {
 		timeout => 1800,
 	}
 
-}
+	file { 'docker:haproxy:haproxy.cfg':
+		path => '/etc/docker/haproxy/haproxy.cfg',
+		source => 'puppet:///modules/docker/haproxy.cfg',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:haproxy'],
+	}
 
-class docker::haproxy::mysql inherits docker::haproxy {
-
-	file { 'docker:haproxy:mysql:haproxy.cfg':
-		path => '/etc/docker/haproxy/mysql.cfg',
-		source => 'puppet:///modules/docker/haproxy_mysql.cfg',
+	file { 'docker:haproxy:https.pem':
+		path => '/etc/docker/haproxy/https.pem',
+		source => 'puppet:///modules/docker/https.pem',
 		owner => root,
 		group => root,
 		mode => 0644,
@@ -57,32 +62,39 @@ class docker::haproxy::mysql inherits docker::haproxy {
 	}
 
 	# Para contêiner desatualizado
-	exec { 'docker:stop:haproxy:mysql':
-		command => '/usr/bin/docker stop haproxy_mysql',
+	exec { 'docker:stop:haproxy:latest':
+		command => '/usr/bin/docker stop haproxy_latest',
 		subscribe => [
 			Exec['docker:build:haproxy:latest'],
-			File['docker:haproxy:mysql:haproxy.cfg'],
+			File['docker:haproxy:haproxy.cfg'],
+			File['docker:haproxy:https.pem'],
 		],
 		refreshonly => true,
-		onlyif => '/usr/bin/docker top haproxy_mysql',
+		onlyif => '/usr/bin/docker top haproxy_latest',
 	}
 
 	# Remove contêiner parado
-	exec { 'docker:rm:haproxy:mysql':
-		command => '/usr/bin/docker rm haproxy_mysql',
-		require => Exec['docker:stop:haproxy:mysql'],
-		unless => '/usr/bin/docker top haproxy_mysql', # não está rodando
-		onlyif => '/usr/bin/docker diff haproxy_mysql', # contêiner existe (mesmo parado)
+	exec { 'docker:rm:haproxy:latest':
+		command => '/usr/bin/docker rm haproxy_latest',
+		require => Exec['docker:stop:haproxy:latest'],
+		unless => '/usr/bin/docker top haproxy_latest', # não está rodando
+		onlyif => '/usr/bin/docker diff haproxy_latest', # contêiner existe (mesmo parado)
 	}
 
 	# Inicia um novo contêiner
-	exec { 'docker:run:haproxy:mysql':
-		command => '/usr/bin/docker run -d -p 13306:3306 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/haproxy/mysql.cfg:/etc/haproxy/haproxy.cfg:ro --name="haproxy_mysql" haproxy:latest',
+	exec { 'docker:run:haproxy:latest':
+		command => '/usr/bin/docker run -d -p 443:443 -p 13306:3306 \
+			-v /etc/hosts:/etc/hosts:ro \
+			-v /dev/log:/dev/log:rw \
+			-v /etc/docker/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg:ro \
+			-v /etc/docker/haproxy/https.pem:/etc/ssl/certs/https.pem:ro \
+			--name="haproxy_latest" haproxy:latest',
 		require => [
-			Exec['docker:rm:haproxy:mysql'],
-			File['docker:haproxy:mysql:haproxy.cfg'],
+			Exec['docker:rm:haproxy:latest'],
+			File['docker:haproxy:haproxy.cfg'],
+			File['docker:haproxy:https.pem'],
 		],
-		unless => '/usr/bin/docker top haproxy_mysql', # não está rodando
+		unless => '/usr/bin/docker top haproxy_latest', # não está rodando
 	}
 
 }
@@ -513,48 +525,6 @@ class docker::varnish inherits docker {
 			File['docker:varnish:latest:default.vcl'],
 		],
 		unless => '/usr/bin/docker top varnish_latest', # não está rodando
-	}
-
-}
-
-class docker::haproxy::varnish inherits docker::haproxy {
-
-	file { 'docker:haproxy:varnish:haproxy.cfg':
-		path => '/etc/docker/haproxy/varnish.cfg',
-		source => 'puppet:///modules/docker/haproxy_varnish.cfg',
-		owner => root,
-		group => root,
-		mode => 0644,
-		require => File['etc:docker:haproxy'],
-	}
-
-	# Para contêiner desatualizado
-	exec { 'docker:stop:haproxy:varnish':
-		command => '/usr/bin/docker stop haproxy_varnish',
-		subscribe => [
-			Exec['docker:build:haproxy:latest'],
-			File['docker:haproxy:varnish:haproxy.cfg'],
-		],
-		refreshonly => true,
-		onlyif => '/usr/bin/docker top haproxy_varnish',
-	}
-
-	# Remove contêiner parado
-	exec { 'docker:rm:haproxy:varnish':
-		command => '/usr/bin/docker rm haproxy_varnish',
-		require => Exec['docker:stop:haproxy:varnish'],
-		unless => '/usr/bin/docker top haproxy_varnish', # não está rodando
-		onlyif => '/usr/bin/docker diff haproxy_varnish', # contêiner existe (mesmo parado)
-	}
-
-	# Inicia um novo contêiner
-	exec { 'docker:run:haproxy:varnish':
-		command => '/usr/bin/docker run -d -p 80:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/haproxy/varnish.cfg:/etc/haproxy/haproxy.cfg:ro --name="haproxy_varnish" haproxy:latest',
-		require => [
-			Exec['docker:rm:haproxy:varnish'],
-			File['docker:haproxy:varnish:haproxy.cfg'],
-		],
-		unless => '/usr/bin/docker top haproxy_varnish', # não está rodando
 	}
 
 }

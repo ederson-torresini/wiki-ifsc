@@ -35,14 +35,13 @@ node "wiki0" {
 
 	include syslog::client
 	include gluster::common
-	include docker::haproxy::mysql
+	include docker::haproxy
 	include docker::memcached
 	include docker::php-fpm::0
 	include docker::php-fpm::1
 	include docker::nginx::0
 	include docker::nginx::1
 	include docker::varnish
-	include docker::haproxy::varnish
 	include www::mediawiki
 
 }
@@ -51,14 +50,13 @@ node "wiki1" {
 
 	include syslog::client
 	include gluster::common
-	include docker::haproxy::mysql
+	include docker::haproxy
 	include docker::memcached
 	include docker::php-fpm::0
 	include docker::php-fpm::1
 	include docker::nginx::0
 	include docker::nginx::1
 	include docker::varnish
-	include docker::haproxy::varnish
 	include www::mediawiki
 
 }
