@@ -205,6 +205,51 @@ class docker::php-fpm inherits docker {
 		require => File['etc:docker:php-fpm'],
 	}
 
+	file { 'etc:docker:php-fpm:config.php':
+		path => '/etc/docker/php-fpm/config.php',
+		source => 'puppet:///modules/docker/config.php',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:php-fpm'],
+	}
+
+	file { 'etc:docker:php-fpm:authsources.php':
+		path => '/etc/docker/php-fpm/authsources.php',
+		source => 'puppet:///modules/docker/authsources.php',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:php-fpm'],
+	}
+
+	file { 'etc:docker:php-fpm:saml20-idp-remote.php':
+		path => '/etc/docker/php-fpm/saml20-idp-remote.php',
+		source => 'puppet:///modules/docker/saml20-idp-remote.php',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:php-fpm'],
+	}
+
+	file { 'etc:docker:php-fpm:saml.pem':
+		path => '/etc/docker/php-fpm/saml.pem',
+		source => 'puppet:///modules/docker/saml.pem',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:php-fpm'],
+	}
+
+	file { 'etc:docker:php-fpm:saml.crt':
+		path => '/etc/docker/php-fpm/saml.crt',
+		source => 'puppet:///modules/docker/saml.crt',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:php-fpm'],
+	}
+
 	file { 'media:wall0:php-fpm':
 		path => '/media/wall0/php-fpm',
 		ensure => directory,
@@ -258,12 +303,31 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:php-fpm:latest:0':
-		command => '/usr/bin/docker run -d -p 8020:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html:/var/www/html:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="php-fpm_latest_0" php-fpm:latest',
+		command => '/usr/bin/docker run -d -p 8020:80 \
+			-v /etc/hosts:/etc/hosts:ro \
+			-v /dev/log:/dev/log:rw \
+			-v /etc/docker/php-fpm/php-fpm.conf:/etc/php5/fpm/php-fpm.conf:ro \
+			-v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro \
+			-v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro \
+			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
+			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
+			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
+			-v /etc/docker/php-fpm/saml.pem:/usr/share/simplesamlphp/cert/saml.pem:ro \
+			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
+			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
+			-v /var/www/html:/var/www/html:ro \
+			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \
+			--name="php-fpm_latest_0" php-fpm:latest',
 		require => [
 			Exec['docker:rm:php-fpm:latest:0'],
 			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
+			File['etc:docker:php-fpm:config.php'],
+			File['etc:docker:php-fpm:authsources.php'],
+			File['etc:docker:php-fpm:saml20-idp-remote.php'],
+			File['etc:docker:php-fpm:saml.pem'],
+			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			Exec['git:mediawiki:skin:vector'],
 			File['media:wall0:www:images']
@@ -298,12 +362,31 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:php-fpm:latest:1':
-		command => '/usr/bin/docker run -d -p 8021:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html:/var/www/html:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="php-fpm_latest_1" php-fpm:latest',
+		command => '/usr/bin/docker run -d -p 8021:80 \
+			-v /etc/hosts:/etc/hosts:ro \
+			-v /dev/log:/dev/log:rw \
+			-v /etc/docker/php-fpm/php-fpm.conf:/etc/php5/fpm/php-fpm.conf:ro \
+			-v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro \
+			-v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro \
+			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
+			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
+			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
+			-v /etc/docker/php-fpm/saml.pem:/etc/ssl/private/saml.pem:ro \
+			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
+			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
+			-v /var/www/html:/var/www/html:ro \
+			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \
+			--name="php-fpm_latest_1" php-fpm:latest',
 		require => [
 			Exec['docker:rm:php-fpm:latest:0'],
 			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
+			File['etc:docker:php-fpm:config.php'],
+			File['etc:docker:php-fpm:authsources.php'],
+			File['etc:docker:php-fpm:saml20-idp-remote.php'],
+			File['etc:docker:php-fpm:saml.pem'],
+			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			Exec['git:mediawiki:skin:vector'],
 			File['media:wall0:www:images']
@@ -351,6 +434,51 @@ class docker::nginx inherits docker {
 		require => File['etc:docker:nginx'],
 	}
 
+	file { 'etc:docker:nginx:config.php':
+		path => '/etc/docker/nginx/config.php',
+		source => 'puppet:///modules/docker/config.php',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:nginx'],
+	}
+
+	file { 'etc:docker:nginx:authsources.php':
+		path => '/etc/docker/nginx/authsources.php',
+		source => 'puppet:///modules/docker/authsources.php',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:nginx'],
+	}
+
+	file { 'etc:docker:nginx:saml20-idp-remote.php':
+		path => '/etc/docker/nginx/saml20-idp-remote.php',
+		source => 'puppet:///modules/docker/saml20-idp-remote.php',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:nginx'],
+	}
+
+	file { 'etc:docker:nginx:saml.pem':
+		path => '/etc/docker/nginx/saml.pem',
+		source => 'puppet:///modules/docker/saml.pem',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:nginx'],
+	}
+
+	file { 'etc:docker:nginx:saml.crt':
+		path => '/etc/docker/nginx/saml.crt',
+		source => 'puppet:///modules/docker/saml.crt',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:nginx'],
+	}
+
 	exec { 'docker:build:nginx:latest':
 		command => '/usr/bin/docker build -t nginx:latest .',
 		cwd => '/etc/docker/nginx',
@@ -385,11 +513,28 @@ class docker::nginx::0 inherits docker::nginx {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:nginx:latest:0':
-		command => '/usr/bin/docker run -d -p 8010:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro -v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro -v /var/www/html:/var/www/html:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="nginx_latest_0" nginx:latest',
+		command => '/usr/bin/docker run -d -p 8010:80 \
+			-v /etc/hosts:/etc/hosts:ro \
+			-v /dev/log:/dev/log:rw \
+			-v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
+			-v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro \
+			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
+			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
+			-v  /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
+			-v /etc/docker/nginx/saml.pem:/etc/ssl/private/saml.pem:ro \
+			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
+			-v /var/www/html:/var/www/html:ro \
+			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \
+			--name="nginx_latest_0" nginx:latest',
 		require => [
 			Exec['docker:rm:nginx:latest:0'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
+			File['etc:docker:nginx:config.php'],
+			File['etc:docker:nginx:authsources.php'],
+			File['etc:docker:nginx:saml20-idp-remote.php'],
+			File['etc:docker:nginx:saml.pem'],
+			File['etc:docker:nginx:saml.crt'],
 			Exec['git:mediawiki:skin:vector'],
 			File['media:wall0:www:images']
 		],
@@ -422,11 +567,28 @@ class docker::nginx::1 inherits docker::nginx {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:nginx:latest:1':
-		command => '/usr/bin/docker run -d -p 8011:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro -v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro -v /var/www/html:/var/www/html:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="nginx_latest_1" nginx:latest',
+		command => '/usr/bin/docker run -d -p 8011:80 \
+			-v /etc/hosts:/etc/hosts:ro \
+			-v /dev/log:/dev/log:rw \
+			-v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
+			-v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro \
+			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
+			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
+			-v /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
+			-v /etc/docker/nginx/saml.pem:/etc/ssl/private/saml.pem:ro \
+			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
+			-v /var/www/html:/var/www/html:ro \
+			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \
+			--name="nginx_latest_1" nginx:latest',
 		require => [
 			Exec['docker:rm:nginx:latest:1'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
+			File['etc:docker:nginx:config.php'],
+			File['etc:docker:nginx:authsources.php'],
+			File['etc:docker:nginx:saml20-idp-remote.php'],
+			File['etc:docker:nginx:saml.pem'],
+			File['etc:docker:nginx:saml.crt'],
 			Exec['git:mediawiki:skin:vector'],
 			File['media:wall0:www:images']
 		],
