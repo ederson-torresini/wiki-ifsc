@@ -154,5 +154,5 @@ $wgSamlSspRoot = '/usr/share/simplesamlphp';
 $wgSamlAuthSource = 'idpcafe.ifsc.edu.br';
 $wgSamlPostLogoutRedirect = null;
 
-#$wgUseSquid = true;
-#$wgUsePrivateIPs = true;
+$wgUseSquid = true;
+$wgUsePrivateIPs = true;
