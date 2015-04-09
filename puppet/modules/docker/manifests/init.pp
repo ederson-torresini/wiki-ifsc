@@ -145,7 +145,11 @@ class docker::memcached inherits docker {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:memcached:latest':
-		command => '/usr/bin/docker run -d -p 11211:11211 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw --name="memcached_latest" memcached:latest /usr/bin/memcached -u memcache -m 256',
+		command => '/usr/bin/docker run -d -p 11211:11211 \
+			-v /etc/hosts:/etc/hosts:ro \
+			-v /dev/log:/dev/log:rw \
+			--name="memcached_latest" memcached:latest \
+			/usr/bin/memcached -u memcache -m 256',
 		require => [
 			Exec['docker:rm:memcached:latest'],
 		],
@@ -241,7 +245,7 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:www.conf'],
 		],
 		refreshonly => true,
-		onlyif => '/usr/bin/docker top nginx_latest_0',
+		onlyif => '/usr/bin/docker top php-fpm_latest_0',
 	}
 
 	# Remove contêiner parado
@@ -281,7 +285,7 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:www.conf'],
 		],
 		refreshonly => true,
-		onlyif => '/usr/bin/docker top nginx_latest_1',
+		onlyif => '/usr/bin/docker top php-fpm_latest_1',
 	}
 
 	# Remove contêiner parado
@@ -351,36 +355,6 @@ class docker::nginx inherits docker {
 		command => '/usr/bin/docker build -t nginx:latest .',
 		cwd => '/etc/docker/nginx',
 		subscribe => File['etc:docker:nginx:Dockerfile'],
-		refreshonly => true,
-		timeout => 1800,
-	}
-
-}
-
-class docker::nginx::shibboleth inherits docker::nginx {
-
-	file { 'etc:docker:nginx:shibboleth':
-		path => '/etc/docker/nginx/shibboleth',
-		ensure => directory,
-		owner => root,
-		group => root,
-		mode => 0750,
-		require => File['etc:docker:nginx'],
-	}
-	
-	file { 'etc:docker:nginx:shibboleth:Dockerfile':
-		path => '/etc/docker/nginx/shibboleth/Dockerfile',
-		source => 'puppet:///modules/docker/Dockerfile-nginx-shibboleth',
-		owner => root,
-		group => root,
-		mode => 0640,
-		require => File['etc:docker:nginx:shibboleth'],
-	}
-
-	exec { 'docker:build:nginx:shibboleth':
-		command => '/usr/bin/docker build -t nginx:shibboleth .',
-		cwd => '/etc/docker/nginx/shibboleth',
-		subscribe => File['etc:docker:nginx:shibboleth:Dockerfile'],
 		refreshonly => true,
 		timeout => 1800,
 	}
@@ -519,7 +493,12 @@ class docker::varnish inherits docker {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:varnish:latest':
-		command => '/usr/bin/docker run -d -p 8000:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/varnish/default.vcl:/etc/varnish/default.vcl:ro --name="varnish_latest" varnish:latest /usr/sbin/varnishd -F -a :80 -s malloc,256M -p thread_pools=2 -p thread_pool_min=400 -p thread_pool_max=1000 -f /etc/varnish/default.vcl',
+		command => '/usr/bin/docker run -d -p 8000:80 \
+			-v /etc/hosts:/etc/hosts:ro \
+			-v /dev/log:/dev/log:rw \
+			-v /etc/docker/varnish/default.vcl:/etc/varnish/default.vcl:ro \
+			--name="varnish_latest" varnish:latest \
+			/usr/sbin/varnishd -F -a :80 -s malloc,256M -f /etc/varnish/default.vcl',
 		require => [
 			Exec['docker:rm:varnish:latest'],
 			File['docker:varnish:latest:default.vcl'],
