@@ -84,4 +84,20 @@ class www::mediawiki inherits www {
 	#	],
 	#}
 
+	exec { 'git:SimpleSamlAuth':
+		command => '/usr/bin/git clone https://github.com/yorn/mwSimpleSamlAuth.git -b v0.4 /var/www/html/wiki/extensions/SimpleSamlAuth',
+		creates => '/var/www/html/wiki/extensions/SimpleSamlAuth',
+		require => Exec['git:mediawiki'],
+	}
+	
+	file { 'link:simplesamlphp':
+		path => '/var/www/html/simplesamlphp',
+		ensure => link,
+		target => '/usr/share/simplesamlphp/www',
+		owner => root,
+		group => root,
+		mode => 0755,
+		require => Exec['git:mediawiki'],
+	}
+
 }

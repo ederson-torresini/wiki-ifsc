@@ -162,6 +162,15 @@ class docker::php-fpm inherits docker {
 		require => File['etc:docker:php-fpm'],
 	}
 	
+	file { 'etc:docker:php-fpm:php-fpm.conf':
+		path => '/etc/docker/php-fpm/php-fpm.conf',
+		source => 'puppet:///modules/docker/php-fpm.conf',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:php-fpm'],
+	}
+
 	file { 'etc:docker:php-fpm:php.ini':
 		path => '/etc/docker/php-fpm/php.ini',
 		source => 'puppet:///modules/docker/php.ini',
@@ -215,6 +224,7 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 		command => '/usr/bin/docker stop php-fpm_latest_0',
 		subscribe => [
 			Exec['docker:build:php-fpm:latest'],
+			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
 		],
@@ -235,6 +245,7 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 		command => '/usr/bin/docker run -d -p 8020:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html:/var/www/html:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="php-fpm_latest_0" php-fpm:latest',
 		require => [
 			Exec['docker:rm:php-fpm:latest:0'],
+			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
 			File['media:wall0:php-fpm:sessions'],
@@ -253,6 +264,7 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 		command => '/usr/bin/docker stop php-fpm_latest_1',
 		subscribe => [
 			Exec['docker:build:php-fpm:latest'],
+			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
 		],
@@ -273,6 +285,7 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 		command => '/usr/bin/docker run -d -p 8021:80 -v /etc/hosts:/etc/hosts:ro -v /dev/log:/dev/log:rw -v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro -v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro -v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw -v /var/www/html:/var/www/html:ro -v /media/wall0/www/images:/var/www/html/wiki/images:rw --name="php-fpm_latest_1" php-fpm:latest',
 		require => [
 			Exec['docker:rm:php-fpm:latest:0'],
+			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
 			File['media:wall0:php-fpm:sessions'],

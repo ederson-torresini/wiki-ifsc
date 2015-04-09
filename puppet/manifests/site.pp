@@ -26,12 +26,14 @@ node "puppet" {
 		enable => true,
 	}
 
+	include syslog::server
 	include gluster::bootstrap
 
 }
 
 node "wiki0" {
 
+	include syslog::client
 	include gluster::common
 	include docker::haproxy::mysql
 	include docker::memcached
@@ -47,6 +49,7 @@ node "wiki0" {
 
 node "wiki1" {
 
+	include syslog::client
 	include gluster::common
 	include docker::haproxy::mysql
 	include docker::memcached

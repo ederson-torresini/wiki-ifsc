@@ -32,7 +32,7 @@ $wgUsePathInfo = true;
 $wgScriptExtension = ".php";
 
 ## The protocol and server name to use in fully-qualified URLs
-$wgServer = "http://200.135.233.70";
+$wgServer = "https://wiki.openstack.sj.ifsc.edu.br";
 
 ## The relative URL path to the skins directory
 $wgStylePath = "$wgScriptPath/skins";
@@ -46,8 +46,8 @@ $wgLogo = "$wgScriptPath/resources/assets/wiki.png";
 $wgEnableEmail = true;
 $wgEnableUserEmail = false; # UPO
 
-$wgEmergencyContact = "webmaster@wiki.local";
-$wgPasswordSender = "webmaster@wiki.local";
+$wgEmergencyContact = "webmaster@openstack.sj.ifsc.edu.br";
+$wgPasswordSender = "webmaster@openstack.sj.ifsc.edu.br";
 
 $wgEnotifUserTalk = false; # UPO
 $wgEnotifWatchlist = false; # UPO
@@ -142,3 +142,17 @@ require_once "$IP/skins/Vector/Vector.php";
 #$wgDefaultUserOptions['visualeditor-enable'] = 1;
 #$wgHiddenPrefs[] = 'visualeditor-enable';
 #$wgDefaultUserOptions['visualeditor-enable-experimental'] = 1;
+
+require_once "$IP/extensions/SimpleSamlAuth/SimpleSamlAuth.php";
+$wgSamlRequirement = SAML_LOGIN_ONLY;
+$wgSamlCreateUser = false;
+$wgSamlConfirmMail = false;
+$wgSamlUsernameAttr = 'uid';
+$wgSamlRealnameAttr = 'cn';
+$wgSamlMailAttr = 'mail';
+$wgSamlSspRoot = '/usr/share/simplesamlphp';
+$wgSamlAuthSource = 'idpcafe.ifsc.edu.br';
+$wgSamlPostLogoutRedirect = null;
+
+#$wgUseSquid = true;
+#$wgUsePrivateIPs = true;
