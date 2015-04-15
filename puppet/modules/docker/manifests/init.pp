@@ -312,7 +312,7 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/php-fpm/saml.pem:/usr/share/simplesamlphp/cert/saml.pem:ro \
+			-v /etc/docker/php-fpm/saml.pem:/etc/ssl/certs/saml.pem:ro \
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
 			-v /var/www/html:/var/www/html:ro \
@@ -371,7 +371,7 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/php-fpm/saml.pem:/etc/ssl/private/saml.pem:ro \
+			-v /etc/docker/php-fpm/saml.pem:/etc/ssl/certs/saml.pem:ro \
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
 			-v /var/www/html:/var/www/html:ro \
@@ -521,7 +521,7 @@ class docker::nginx::0 inherits docker::nginx {
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v  /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/nginx/saml.pem:/etc/ssl/private/saml.pem:ro \
+			-v /etc/docker/nginx/saml.pem:/etc/ssl/certs/saml.pem:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
 			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \
@@ -575,7 +575,7 @@ class docker::nginx::1 inherits docker::nginx {
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/nginx/saml.pem:/etc/ssl/private/saml.pem:ro \
+			-v /etc/docker/nginx/saml.pem:/etc/ssl/certs/saml.pem:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
 			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \

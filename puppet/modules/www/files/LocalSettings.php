@@ -143,13 +143,14 @@ require_once "$IP/skins/Vector/Vector.php";
 #$wgHiddenPrefs[] = 'visualeditor-enable';
 #$wgDefaultUserOptions['visualeditor-enable-experimental'] = 1;
 
+$wgSessionName = "PHPSESSID";
 require_once "$IP/extensions/SimpleSamlAuth/SimpleSamlAuth.php";
 $wgSamlRequirement = SAML_LOGIN_ONLY;
-$wgSamlCreateUser = false;
+$wgSamlCreateUser = true;
 $wgSamlConfirmMail = false;
-$wgSamlUsernameAttr = 'uid';
-$wgSamlRealnameAttr = 'cn';
-$wgSamlMailAttr = 'mail';
+$wgSamlUsernameAttr = 'urn:oid:0.9.2342.19200300.100.1.1';
+$wgSamlRealnameAttr = 'urn:oid:2.5.4.3';
+$wgSamlMailAttr = 'urn:oid:0.9.2342.19200300.100.1.3';
 $wgSamlSspRoot = '/usr/share/simplesamlphp';
 $wgSamlAuthSource = 'idpcafe.ifsc.edu.br';
 $wgSamlPostLogoutRedirect = null;
