@@ -278,6 +278,19 @@ class docker::php-fpm inherits docker {
 
 }
 
+class docker::php-fpm::limpeza {
+
+	file { 'cron:sessions':
+		path => '/etc/cron.hourly/sessions',
+		source => 'puppet:///modules/docker/sessions',
+		owner => root,
+		group => root,
+		mode => 0754,
+		require => Exec['mount:wall0'],
+	}
+
+}
+
 class docker::php-fpm::0 inherits docker::php-fpm {
 	
 	# Para contêiner desatualizado
