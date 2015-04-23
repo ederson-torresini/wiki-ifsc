@@ -28,6 +28,7 @@ node "puppet" {
 
 	include syslog::server
 	include gluster::bootstrap
+	include docker::php-fpm::limpeza
 
 }
 

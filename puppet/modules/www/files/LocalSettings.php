@@ -148,12 +148,14 @@ require_once "$IP/extensions/SimpleSamlAuth/SimpleSamlAuth.php";
 $wgSamlRequirement = SAML_LOGIN_ONLY;
 $wgSamlCreateUser = true;
 $wgSamlConfirmMail = false;
-$wgSamlUsernameAttr = 'urn:oid:0.9.2342.19200300.100.1.1';
-$wgSamlRealnameAttr = 'urn:oid:2.5.4.3';
-$wgSamlMailAttr = 'urn:oid:0.9.2342.19200300.100.1.3';
-$wgSamlSspRoot = '/usr/share/simplesamlphp';
-$wgSamlAuthSource = 'idpcafe.ifsc.edu.br';
+$wgSamlUsernameAttr = "urn:oid:0.9.2342.19200300.100.1.1";
+$wgSamlRealnameAttr = "urn:oid:2.5.4.3";
+$wgSamlMailAttr = "urn:oid:0.9.2342.19200300.100.1.3";
+$wgSamlSspRoot = "/usr/share/simplesamlphp";
+$wgSamlAuthSource = "idpcafe.ifsc.edu.br";
 $wgSamlPostLogoutRedirect = null;
 
 $wgUseSquid = true;
 $wgUsePrivateIPs = true;
+
+$wgLocaltimezone = "America/Sao_Paulo";
