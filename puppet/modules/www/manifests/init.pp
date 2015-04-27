@@ -21,7 +21,7 @@ class www {
 class www::mediawiki inherits www {
 
 	exec { 'git:mediawiki':
-		command => '/usr/bin/git clone --depth 1 https://git.wikimedia.org/git/mediawiki/core.git -b 1.24.1 /var/www/html/wiki',
+		command => '/usr/bin/git clone --depth 1 https://git.wikimedia.org/git/mediawiki/core.git -b REL1_24 /var/www/html/wiki',
 		creates => '/var/www/html/wiki/.git',
 	}
 
@@ -61,7 +61,7 @@ class www::mediawiki inherits www {
 	file { 'media:wall0:www:images':
 		path => '/media/wall0/www/images',
 		ensure => directory,
-		owner => root,
+		owner => www-data,
 		group => www-data,
 		mode => 0770,
 		require => File['media:wall0:www'],

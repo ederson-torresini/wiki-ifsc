@@ -262,7 +262,7 @@ class docker::php-fpm inherits docker {
 	file { 'media:wall0:php-fpm:sessions':
 		path => '/media/wall0/php-fpm/sessions',
 		ensure => directory,
-		owner => root,
+		owner => www-data,
 		group => www-data,
 		mode => 0770,
 		require => File['media:wall0:php-fpm'],
