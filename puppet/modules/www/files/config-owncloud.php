@@ -1,10 +1,10 @@
 <?php
 $CONFIG = array (
-	'overwritehost' => 'owncloud.openstack.sj.ifsc.edu.br',
+	'overwritehost' => 'www.openstack.sj.ifsc.edu.br',
 	'overwriteprotocol' => 'https',
-	'overwrite.cli.url' => 'https://owncloud.openstack.sj.ifsc.edu.br/owncloud',
+	'overwrite.cli.url' => 'https://www.openstack.sj.ifsc.edu.br/owncloud',
 	'trusted_domains' => array (
-		0 => 'owncloud.openstack.sj.ifsc.edu.br',
+		0 => 'www.openstack.sj.ifsc.edu.br',
 	),
 	'datadirectory' => '/var/www/html/owncloud/data',
 	'appstoreenabled' => false,
@@ -37,7 +37,7 @@ $CONFIG = array (
 		),
 	),
 	'installed' => true,
-	'instanceid' => 'PHPSESSID',
+	'instanceid' => 'owncloud',
 	'passwordsalt' => 'owncloud',
 	'secret' => 'owcloud',
 	'version' => '8.0.3.4',

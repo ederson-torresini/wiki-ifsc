@@ -52,6 +52,8 @@ class docker::haproxy inherits docker {
 		require => File['etc:docker:haproxy'],
 	}
 
+	# O arquivo https.pem foi gerado com o comando:
+	# openssl req -new -x509 -nodes -days 365 -keyout https.pem -out https.pem
 	file { 'docker:haproxy:https.pem':
 		path => '/etc/docker/haproxy/https.pem',
 		source => 'puppet:///modules/docker/https.pem',
@@ -232,15 +234,18 @@ class docker::php-fpm inherits docker {
 		require => File['etc:docker:php-fpm'],
 	}
 
-	file { 'etc:docker:php-fpm:saml.pem':
-		path => '/etc/docker/php-fpm/saml.pem',
-		source => 'puppet:///modules/docker/saml.pem',
+	# Os 2 próximos arquivos foram gerados com o comando:
+	# openssl req -new -x509 -nodes -days 365 -keyout saml.key -out saml.crt
+	file { 'etc:docker:php-fpm:saml.key':
+		path => '/etc/docker/php-fpm/saml.key',
+		source => 'puppet:///modules/docker/saml.key',
 		owner => root,
 		group => root,
 		mode => 0644,
 		require => File['etc:docker:php-fpm'],
 	}
 
+	# Ver comentário do recurso anterior
 	file { 'etc:docker:php-fpm:saml.crt':
 		path => '/etc/docker/php-fpm/saml.crt',
 		source => 'puppet:///modules/docker/saml.crt',
@@ -326,7 +331,7 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/php-fpm/saml.pem:/etc/ssl/certs/saml.pem:ro \
+			-v /etc/docker/php-fpm/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
 			-v /var/www/html:/var/www/html:ro \
@@ -343,7 +348,7 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:config.php'],
 			File['etc:docker:php-fpm:authsources.php'],
 			File['etc:docker:php-fpm:saml20-idp-remote.php'],
-			File['etc:docker:php-fpm:saml.pem'],
+			File['etc:docker:php-fpm:saml.key'],
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			Exec['git:mediawiki:skin:vector'],
@@ -392,7 +397,7 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/php-fpm/saml.pem:/etc/ssl/certs/saml.pem:ro \
+			-v /etc/docker/php-fpm/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
 			-v /var/www/html:/var/www/html:ro \
@@ -409,7 +414,7 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:config.php'],
 			File['etc:docker:php-fpm:authsources.php'],
 			File['etc:docker:php-fpm:saml20-idp-remote.php'],
-			File['etc:docker:php-fpm:saml.pem'],
+			File['etc:docker:php-fpm:saml.key'],
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			Exec['git:mediawiki:skin:vector'],
@@ -488,9 +493,9 @@ class docker::nginx inherits docker {
 		require => File['etc:docker:nginx'],
 	}
 
-	file { 'etc:docker:nginx:saml.pem':
-		path => '/etc/docker/nginx/saml.pem',
-		source => 'puppet:///modules/docker/saml.pem',
+	file { 'etc:docker:nginx:saml.key':
+		path => '/etc/docker/nginx/saml.key',
+		source => 'puppet:///modules/docker/saml.key',
 		owner => root,
 		group => root,
 		mode => 0644,
@@ -548,8 +553,8 @@ class docker::nginx::0 inherits docker::nginx {
 			-v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro \
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
-			-v  /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/nginx/saml.pem:/etc/ssl/certs/saml.pem:ro \
+			-v /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
+			-v /etc/docker/nginx/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
 			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
@@ -564,7 +569,7 @@ class docker::nginx::0 inherits docker::nginx {
 			File['etc:docker:nginx:config.php'],
 			File['etc:docker:nginx:authsources.php'],
 			File['etc:docker:nginx:saml20-idp-remote.php'],
-			File['etc:docker:nginx:saml.pem'],
+			File['etc:docker:nginx:saml.key'],
 			File['etc:docker:nginx:saml.crt'],
 			Exec['git:mediawiki:skin:vector'],
 			File['media:wall0:www:wiki:images'],
@@ -610,7 +615,7 @@ class docker::nginx::1 inherits docker::nginx {
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/nginx/saml.pem:/etc/ssl/certs/saml.pem:ro \
+			-v /etc/docker/nginx/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
 			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
@@ -625,7 +630,7 @@ class docker::nginx::1 inherits docker::nginx {
 			File['etc:docker:nginx:config.php'],
 			File['etc:docker:nginx:authsources.php'],
 			File['etc:docker:nginx:saml20-idp-remote.php'],
-			File['etc:docker:nginx:saml.pem'],
+			File['etc:docker:nginx:saml.key'],
 			File['etc:docker:nginx:saml.crt'],
 			Exec['git:mediawiki:skin:vector'],
 			File['media:wall0:www:wiki:images'],

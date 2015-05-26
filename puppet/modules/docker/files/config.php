@@ -1,7 +1,7 @@
 <?php
 
 $config = array(
-    'baseurlpath' => 'https://wiki.openstack.sj.ifsc.edu.br/simplesamlphp/',
+    'baseurlpath' => 'https://www.openstack.sj.ifsc.edu.br/simplesamlphp/',
     'certdir' => '/etc/ssl/certs/',
     'loggingdir' => '/var/log/simplesamlphp/',
     'datadir' => '/var/lib/simplesamlphp/data/',

@@ -137,6 +137,16 @@ class www::owncloud inherits www {
 		require => Exec['git:owncloud:core'],
 	}
 
+	# Correção de código para evitar problemas com segurança (CSP)
+	file { 'git:owncloud:apps+:utils.js':
+		path => '/var/www/html/owncloud/apps+/user_saml/js/utils.js',
+		source => 'puppet:///modules/www/utils.js',
+		owner => www-data,
+		group => www-data,
+		mode => 0440,
+		require => Exec['git:owncloud:apps+'],
+	}
+
 	file { 'media:wall0:www:owncloud':
 		path => '/media/wall0/www/owncloud',
 		ensure => directory,
@@ -252,6 +262,7 @@ class www::owncloud inherits www {
 			Exec['git:owncloud:core'],
 			Exec['git:owncloud:3rdparty'],
 			Exec['git:owncloud:apps+'],
+			File['git:owncloud:apps+:utils.js'],
 			File['media:wall0:www:owncloud:config'],
 			File['git:owncloud:data'],
 			File['media:wall0:www:owncloud:data'],
