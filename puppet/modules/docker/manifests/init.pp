@@ -319,6 +319,7 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 		command => '/usr/bin/docker run -d -p 8020:80 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
+			-v /dev/urandom:/dev/urandom:rw \
 			-v /etc/docker/php-fpm/php-fpm.conf:/etc/php5/fpm/php-fpm.conf:ro \
 			-v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro \
 			-v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro \
@@ -329,7 +330,10 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
 			-v /var/www/html:/var/www/html:ro \
-			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \
+			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
+			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
+			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
+			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
 			--name="php-fpm_latest_0" php-fpm:latest',
 		require => [
 			Exec['docker:rm:php-fpm:latest:0'],
@@ -343,7 +347,10 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			Exec['git:mediawiki:skin:vector'],
-			File['media:wall0:www:images']
+			File['media:wall0:www:wiki:images'],
+			File['media:wall0:www:owncloud:config'],
+			File['media:wall0:www:owncloud:data'],
+			File['media:wall0:www:owncloud:themes'],
 		],
 		unless => '/usr/bin/docker top php-fpm_latest_0', # não está rodando
 	}
@@ -378,6 +385,7 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 		command => '/usr/bin/docker run -d -p 8021:80 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
+			-v /dev/urandom:/dev/urandom:rw \
 			-v /etc/docker/php-fpm/php-fpm.conf:/etc/php5/fpm/php-fpm.conf:ro \
 			-v /etc/docker/php-fpm/php.ini:/etc/php5/fpm/php.ini:ro \
 			-v /etc/docker/php-fpm/www.conf:/etc/php5/fpm/pool.d/www.conf:ro \
@@ -388,7 +396,10 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
 			-v /var/www/html:/var/www/html:ro \
-			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \
+			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
+			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
+			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
+			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
 			--name="php-fpm_latest_1" php-fpm:latest',
 		require => [
 			Exec['docker:rm:php-fpm:latest:0'],
@@ -402,7 +413,10 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			Exec['git:mediawiki:skin:vector'],
-			File['media:wall0:www:images']
+			File['media:wall0:www:wiki:images'],
+			File['media:wall0:www:owncloud:config'],
+			File['media:wall0:www:owncloud:data'],
+			File['media:wall0:www:owncloud:themes'],
 		],
 		unless => '/usr/bin/docker top php-fpm_latest_1', # não está rodando
 	}
@@ -529,6 +543,7 @@ class docker::nginx::0 inherits docker::nginx {
 		command => '/usr/bin/docker run -d -p 8010:80 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
+			-v /dev/urandom:/dev/urandom:rw \
 			-v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
 			-v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro \
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
@@ -537,7 +552,10 @@ class docker::nginx::0 inherits docker::nginx {
 			-v /etc/docker/nginx/saml.pem:/etc/ssl/certs/saml.pem:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
-			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \
+			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
+			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
+			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
+			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
 			--name="nginx_latest_0" nginx:latest',
 		require => [
 			Exec['docker:rm:nginx:latest:0'],
@@ -549,7 +567,10 @@ class docker::nginx::0 inherits docker::nginx {
 			File['etc:docker:nginx:saml.pem'],
 			File['etc:docker:nginx:saml.crt'],
 			Exec['git:mediawiki:skin:vector'],
-			File['media:wall0:www:images']
+			File['media:wall0:www:wiki:images'],
+			File['media:wall0:www:owncloud:config'],
+			File['media:wall0:www:owncloud:data'],
+			File['media:wall0:www:owncloud:themes'],
 		],
 		unless => '/usr/bin/docker top nginx_latest_0', # não está rodando
 	}
@@ -583,6 +604,7 @@ class docker::nginx::1 inherits docker::nginx {
 		command => '/usr/bin/docker run -d -p 8011:80 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
+			-v /dev/urandom:/dev/urandom:rw \
 			-v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
 			-v /etc/docker/nginx/fastcgi_params:/etc/nginx/fastcgi_params:ro \
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
@@ -591,7 +613,10 @@ class docker::nginx::1 inherits docker::nginx {
 			-v /etc/docker/nginx/saml.pem:/etc/ssl/certs/saml.pem:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
-			-v /media/wall0/www/images:/var/www/html/wiki/images:rw \
+			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
+			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
+			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
+			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
 			--name="nginx_latest_1" nginx:latest',
 		require => [
 			Exec['docker:rm:nginx:latest:1'],
@@ -603,7 +628,10 @@ class docker::nginx::1 inherits docker::nginx {
 			File['etc:docker:nginx:saml.pem'],
 			File['etc:docker:nginx:saml.crt'],
 			Exec['git:mediawiki:skin:vector'],
-			File['media:wall0:www:images']
+			File['media:wall0:www:wiki:images'],
+			File['media:wall0:www:owncloud:config'],
+			File['media:wall0:www:owncloud:data'],
+			File['media:wall0:www:owncloud:themes'],
 		],
 		unless => '/usr/bin/docker top nginx_latest_1', # não está rodando
 	}
