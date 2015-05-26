@@ -22,7 +22,7 @@ $wgEnotifWatchlist = false; # UPO
 $wgEmailAuthentication = false;
 
 $wgDBtype = "mysql";
-$wgDBserver = "wiki0:13306";
+$wgDBserver = "mysql:13306";
 $wgDBname = "mediawiki";
 $wgDBuser = "mediawiki";
 $wgDBpassword = "mediawiki";

@@ -7,7 +7,7 @@ backend nginx0_8010 {
 	.port = "8010";
 	.probe = {
 		.url = "/wiki/mw-config/images/bullet.gif";
-		.interval = 10s;
+		.interval = 5s;
 		.timeout = 2s;
 		.window = 5;
 		.threshold = 3;
@@ -19,7 +19,7 @@ backend nginx0_8011 {
 	.port = "8011";
 	.probe = {
 		.url = "/wiki/mw-config/images/bullet.gif";
-		.interval = 10s;
+		.interval = 5s;
 		.timeout = 2s;
 		.window = 5;
 		.threshold = 3;
@@ -31,7 +31,7 @@ backend nginx1_8010 {
 	.port = "8010";
 	.probe = {
 		.url = "/wiki/mw-config/images/bullet.gif";
-		.interval = 10s;
+		.interval = 5s;
 		.timeout = 2s;
 		.window = 5;
 		.threshold = 3;
@@ -43,7 +43,7 @@ backend nginx1_8011 {
 	.port = "8011";
 	.probe = {
 		.url = "/wiki/mw-config/images/bullet.gif";
-		.interval = 10s;
+		.interval = 5s;
 		.timeout = 2s;
 		.window = 5;
 		.threshold = 3;
