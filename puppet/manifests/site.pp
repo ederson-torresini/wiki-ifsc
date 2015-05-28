@@ -13,8 +13,8 @@ package { 'git':
 
 include ntp
 #
-# Alterne a configuração caso precise iniciar um novo cluster, bootstrap,
-# ou elevar ao grau de produção, cluster.
+# Alterne a configuração caso precise iniciar um novo cluster (bootstrap)
+# ou elevar ao grau de produção (cluster).
 include mysql::bootstrap
 #include mysql::cluster
 

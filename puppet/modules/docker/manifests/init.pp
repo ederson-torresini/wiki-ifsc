@@ -85,7 +85,7 @@ class docker::haproxy inherits docker {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:haproxy:latest':
-		command => '/usr/bin/docker run -d -p 443:443 -p 13306:3306 \
+		command => '/usr/bin/docker run -d -p 80:80 -p 443:443 -p 13306:3306 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
 			-v /etc/docker/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg:ro \

@@ -212,7 +212,6 @@ class www::owncloud inherits www {
 		require => Exec['git:owncloud:core'],
 	}
 
-
 	file { 'owncloud.sql':
 		path => '/etc/mysql/owncloud.sql',
 		source => 'puppet:///modules/www/owncloud.sql',
