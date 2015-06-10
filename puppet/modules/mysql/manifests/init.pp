@@ -63,8 +63,8 @@ class mysql::bootstrap {
 
 	$sourceBootstrap = $hostname ? {
 		'puppet' => 'puppet:///modules/mysql/wsrep.cnf-puppet-bootstrap',
-		'wiki0' => 'puppet:///modules/mysql/wsrep.cnf-wiki0-bootstrap',
-		'wiki1' => 'puppet:///modules/mysql/wsrep.cnf-wiki1-bootstrap',
+		'web0' => 'puppet:///modules/mysql/wsrep.cnf-web0-bootstrap',
+		'web1' => 'puppet:///modules/mysql/wsrep.cnf-web1-bootstrap',
 	}
 
 	file { 'wsrep.cnf':
@@ -129,8 +129,8 @@ class mysql::cluster inherits mysql::bootstrap {
 
 	$sourceCluster = $hostname ? {
 		'puppet' => 'puppet:///modules/mysql/wsrep.cnf-puppet-cluster',
-		'wiki0' => 'puppet:///modules/mysql/wsrep.cnf-wiki0-cluster',
-		'wiki1' => 'puppet:///modules/mysql/wsrep.cnf-wiki1-cluster',
+		'web0' => 'puppet:///modules/mysql/wsrep.cnf-web0-cluster',
+		'web1' => 'puppet:///modules/mysql/wsrep.cnf-web1-cluster',
 	}
 
 	File <| title == 'wsrep.cnf' |> {

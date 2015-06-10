@@ -98,24 +98,24 @@ class gluster::common {
 
 class gluster::bootstrap inherits gluster::common {
 
-	exec { 'gluster:probe:wiki0':
-		command => '/usr/sbin/gluster peer probe wiki0',
-		unless => '/usr/sbin/gluster peer status | grep wiki0',
+	exec { 'gluster:probe:web0':
+		command => '/usr/sbin/gluster peer probe web0',
+		unless => '/usr/sbin/gluster peer status | grep web0',
 		require => Package['glusterfs-client'],
 	}
 
-	exec { 'gluster:probe:wiki1':
-		command => '/usr/sbin/gluster peer probe wiki1',
-		unless => '/usr/sbin/gluster peer status | grep wiki1',
+	exec { 'gluster:probe:web1':
+		command => '/usr/sbin/gluster peer probe web1',
+		unless => '/usr/sbin/gluster peer status | grep web1',
 		require => Package['glusterfs-client'],
 	}
 
 	exec { 'gluster:volume:create:wall0':
-	command => '/usr/sbin/gluster volume create wall0 replica 3 transport tcp puppet:/glusterfs/wall0 wiki0:/glusterfs/wall0 wiki1:/glusterfs/wall0',
+	command => '/usr/sbin/gluster volume create wall0 replica 3 transport tcp puppet:/glusterfs/wall0 web0:/glusterfs/wall0 web1:/glusterfs/wall0',
 		require => [
 			File['dir:glusterfs:wall0'],
-			Exec['gluster:probe:wiki0'],
-			Exec['gluster:probe:wiki1'],
+			Exec['gluster:probe:web0'],
+			Exec['gluster:probe:web1'],
 		],
 		creates => '/var/lib/glusterd/vols/wall0/info',
 	}

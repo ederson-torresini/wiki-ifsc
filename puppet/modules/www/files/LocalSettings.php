@@ -31,7 +31,7 @@ $wgDBTableOptions = "ENGINE=InnoDB, DEFAULT CHARSET=binary";
 $wgDBmysql5 = true;
 
 $wgMainCacheType = CACHE_MEMCACHED;
-$wgMemCachedServers = array( 'wiki0:11211\r\nwiki1:11211' );
+$wgMemCachedServers = array( 'web0:11211\r\nweb1:11211' );
 $wgUseGzip = true;
 $wgEnableSidebarCache = true;
 

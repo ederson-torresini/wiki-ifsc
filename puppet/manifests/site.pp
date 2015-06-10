@@ -35,7 +35,7 @@ node "puppet" {
 
 }
 
-node "wiki0" {
+node "web0" {
 
 	include syslog::client
 	include gluster::common
@@ -51,7 +51,7 @@ node "wiki0" {
 
 }
 
-node "wiki1" {
+node "web1" {
 
 	include syslog::client
 	include gluster::common

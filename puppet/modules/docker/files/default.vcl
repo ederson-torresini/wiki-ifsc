@@ -3,7 +3,7 @@ vcl 4.0;
 import directors;
 
 backend nginx0_8010 {
-	.host = "wiki0";
+	.host = "web0";
 	.port = "8010";
 	.probe = {
 		.url = "/wiki/mw-config/images/bullet.gif";
@@ -15,7 +15,7 @@ backend nginx0_8010 {
 }
 
 backend nginx0_8011 {
-	.host = "wiki0";
+	.host = "web0";
 	.port = "8011";
 	.probe = {
 		.url = "/wiki/mw-config/images/bullet.gif";
@@ -27,7 +27,7 @@ backend nginx0_8011 {
 }
 
 backend nginx1_8010 {
-	.host = "wiki1";
+	.host = "web1";
 	.port = "8010";
 	.probe = {
 		.url = "/wiki/mw-config/images/bullet.gif";
@@ -39,7 +39,7 @@ backend nginx1_8010 {
 }
 
 backend nginx1_8011 {
-	.host = "wiki1";
+	.host = "web1";
 	.port = "8011";
 	.probe = {
 		.url = "/wiki/mw-config/images/bullet.gif";

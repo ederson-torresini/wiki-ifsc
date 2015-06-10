@@ -35,11 +35,11 @@ class docker::haproxy inherits docker {
 		require => File['etc:docker:haproxy'],
 	}
 
-	exec { 'docker:build:haproxy:latest':
-		command => '/usr/bin/docker build -t haproxy:latest .',
+	exec { 'docker:build:ifsc/haproxy:latest':
+		command => '/usr/bin/docker build -t ifsc/haproxy:latest .',
 		cwd => '/etc/docker/haproxy',
-		subscribe => File['etc:docker:haproxy:Dockerfile'],
-		refreshonly => true,
+		require => File['etc:docker:haproxy:Dockerfile'],
+		unless => '/usr/bin/docker images | grep -q ifsc/haproxy',
 		timeout => 1800,
 	}
 
@@ -64,10 +64,10 @@ class docker::haproxy inherits docker {
 	}
 
 	# Para contêiner desatualizado
-	exec { 'docker:stop:haproxy:latest':
+	exec { 'docker:stop:ifsc/haproxy:latest':
 		command => '/usr/bin/docker stop haproxy_latest',
 		subscribe => [
-			Exec['docker:build:haproxy:latest'],
+			Exec['docker:build:ifsc/haproxy:latest'],
 			File['docker:haproxy:haproxy.cfg'],
 			File['docker:haproxy:https.pem'],
 		],
@@ -76,23 +76,24 @@ class docker::haproxy inherits docker {
 	}
 
 	# Remove contêiner parado
-	exec { 'docker:rm:haproxy:latest':
+	exec { 'docker:rm:ifsc/haproxy:latest':
 		command => '/usr/bin/docker rm haproxy_latest',
-		require => Exec['docker:stop:haproxy:latest'],
+		require => Exec['docker:stop:ifsc/haproxy:latest'],
 		unless => '/usr/bin/docker top haproxy_latest', # não está rodando
 		onlyif => '/usr/bin/docker diff haproxy_latest', # contêiner existe (mesmo parado)
 	}
 
 	# Inicia um novo contêiner
-	exec { 'docker:run:haproxy:latest':
+	exec { 'docker:run:ifsc/haproxy:latest':
 		command => '/usr/bin/docker run -d -p 80:80 -p 443:443 -p 13306:3306 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
 			-v /etc/docker/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg:ro \
 			-v /etc/docker/haproxy/https.pem:/etc/ssl/certs/https.pem:ro \
-			--name="haproxy_latest" haproxy:latest',
+			--name="haproxy_latest" ifsc/haproxy:latest',
 		require => [
-			Exec['docker:rm:haproxy:latest'],
+			Exec['docker:build:ifsc/haproxy:latest'],
+			Exec['docker:rm:ifsc/haproxy:latest'],
 			File['docker:haproxy:haproxy.cfg'],
 			File['docker:haproxy:https.pem'],
 		],
@@ -121,39 +122,40 @@ class docker::memcached inherits docker {
 		require => File['etc:docker:memcached'],
 	}
 
-	exec { 'docker:build:memcached:latest':
-		command => '/usr/bin/docker build -t memcached:latest .',
+	exec { 'docker:build:ifsc/memcached:latest':
+		command => '/usr/bin/docker build -t ifsc/memcached:latest .',
 		cwd => '/etc/docker/memcached',
-		subscribe => File['etc:docker:memcached:Dockerfile'],
-		refreshonly => true,
+		require => File['etc:docker:memcached:Dockerfile'],
+		unless => '/usr/bin/docker images | grep -q ifsc/memcached',
 		timeout => 1800,
 	}
 
 	# Para contêiner desatualizado
-	exec { 'docker:stop:memcached:latest':
+	exec { 'docker:stop:ifsc/memcached:latest':
 		command => '/usr/bin/docker stop memcached_latest',
-		subscribe => Exec['docker:build:memcached:latest'],
+		subscribe => Exec['docker:build:ifsc/memcached:latest'],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top memcached_latest',
 	}
 
 	# Remove contêiner parado
-	exec { 'docker:rm:memcached:latest':
+	exec { 'docker:rm:ifsc/memcached:latest':
 		command => '/usr/bin/docker rm memcached_latest',
-		require => Exec['docker:stop:memcached:latest'],
+		require => Exec['docker:stop:ifsc/memcached:latest'],
 		unless => '/usr/bin/docker top memcached_latest', # não está rodando
 		onlyif => '/usr/bin/docker diff memcached_latest', # contêiner existe (mesmo parado)
 	}
 
 	# Inicia um novo contêiner
-	exec { 'docker:run:memcached:latest':
+	exec { 'docker:run:ifsc/memcached:latest':
 		command => '/usr/bin/docker run -d -p 11211:11211 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
-			--name="memcached_latest" memcached:latest \
+			--name="memcached_latest" ifsc/memcached:latest \
 			/usr/bin/memcached -u memcache -m 256',
 		require => [
-			Exec['docker:rm:memcached:latest'],
+			Exec['docker:build:ifsc/memcached:latest'],
+			Exec['docker:rm:ifsc/memcached:latest'],
 		],
 		unless => '/usr/bin/docker top memcached_latest', # não está rodando
 	}
@@ -273,11 +275,11 @@ class docker::php-fpm inherits docker {
 		require => File['media:wall0:php-fpm'],
 	}
 
-	exec { 'docker:build:php-fpm:latest':
-		command => '/usr/bin/docker build -t php-fpm:latest .',
+	exec { 'docker:build:ifsc/php-fpm:latest':
+		command => '/usr/bin/docker build -t ifsc/php-fpm:latest .',
 		cwd => '/etc/docker/php-fpm',
-		subscribe => File['etc:docker:php-fpm:Dockerfile'],
-		refreshonly => true,
+		require => File['etc:docker:php-fpm:Dockerfile'],
+		unless => '/usr/bin/docker images | grep -q ifsc/php-fpm',
 		timeout => 1800,
 	}
 
@@ -299,28 +301,34 @@ class docker::php-fpm::limpeza {
 class docker::php-fpm::0 inherits docker::php-fpm {
 	
 	# Para contêiner desatualizado
-	exec { 'docker:stop:php-fpm:latest:0':
+	exec { 'docker:stop:ifsc/php-fpm:latest:0':
 		command => '/usr/bin/docker stop php-fpm_latest_0',
 		subscribe => [
-			Exec['docker:build:php-fpm:latest'],
+			Exec['docker:build:ifsc/php-fpm:latest'],
 			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
+			File['media:wall0:php-fpm:sessions'],
+			Exec['git:mediawiki:skin:vector'],
+			File['media:wall0:www:wiki:images'],
+			File['media:wall0:www:owncloud:config'],
+			File['media:wall0:www:owncloud:data'],
+			File['media:wall0:www:owncloud:themes'],
 		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top php-fpm_latest_0',
 	}
 
 	# Remove contêiner parado
-	exec { 'docker:rm:php-fpm:latest:0':
+	exec { 'docker:rm:ifsc/php-fpm:latest:0':
 		command => '/usr/bin/docker rm php-fpm_latest_0',
-		require => Exec['docker:stop:php-fpm:latest:0'],
+		require => Exec['docker:stop:ifsc/php-fpm:latest:0'],
 		unless => '/usr/bin/docker top php-fpm_latest_0', # não está rodando
 		onlyif => '/usr/bin/docker diff php-fpm_latest_0', # contêiner existe (mesmo parado)
 	}
 
 	# Inicia um novo contêiner
-	exec { 'docker:run:php-fpm:latest:0':
+	exec { 'docker:run:ifsc/php-fpm:latest:0':
 		command => '/usr/bin/docker run -d -p 8020:80 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
@@ -339,9 +347,10 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
 			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
 			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
-			--name="php-fpm_latest_0" php-fpm:latest',
+			--name="php-fpm_latest_0" ifsc/php-fpm:latest',
 		require => [
-			Exec['docker:rm:php-fpm:latest:0'],
+			Exec['docker:build:ifsc/php-fpm:latest'],
+			Exec['docker:rm:ifsc/php-fpm:latest:0'],
 			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
@@ -365,28 +374,34 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 class docker::php-fpm::1 inherits docker::php-fpm {
 	
 	# Para contêiner desatualizado
-	exec { 'docker:stop:php-fpm:latest:1':
+	exec { 'docker:stop:ifsc/php-fpm:latest:1':
 		command => '/usr/bin/docker stop php-fpm_latest_1',
 		subscribe => [
-			Exec['docker:build:php-fpm:latest'],
+			Exec['docker:build:ifsc/php-fpm:latest'],
 			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
+			File['media:wall0:php-fpm:sessions'],
+			Exec['git:mediawiki:skin:vector'],
+			File['media:wall0:www:wiki:images'],
+			File['media:wall0:www:owncloud:config'],
+			File['media:wall0:www:owncloud:data'],
+			File['media:wall0:www:owncloud:themes'],
 		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top php-fpm_latest_1',
 	}
 
 	# Remove contêiner parado
-	exec { 'docker:rm:php-fpm:latest:1':
+	exec { 'docker:rm:ifsc/php-fpm:latest:1':
 		command => '/usr/bin/docker rm php-fpm_latest_1',
-		require => Exec['docker:stop:php-fpm:latest:1'],
+		require => Exec['docker:stop:ifsc/php-fpm:latest:1'],
 		unless => '/usr/bin/docker top php-fpm_latest_1', # não está rodando
 		onlyif => '/usr/bin/docker diff php-fpm_latest_1', # contêiner existe (mesmo parado)
 	}
 
 	# Inicia um novo contêiner
-	exec { 'docker:run:php-fpm:latest:1':
+	exec { 'docker:run:ifsc/php-fpm:latest:1':
 		command => '/usr/bin/docker run -d -p 8021:80 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
@@ -405,9 +420,10 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
 			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
 			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
-			--name="php-fpm_latest_1" php-fpm:latest',
+			--name="php-fpm_latest_1" ifsc/php-fpm:latest',
 		require => [
-			Exec['docker:rm:php-fpm:latest:0'],
+			Exec['docker:build:ifsc/php-fpm:latest'],
+			Exec['docker:rm:ifsc/php-fpm:latest:0'],
 			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
@@ -511,11 +527,11 @@ class docker::nginx inherits docker {
 		require => File['etc:docker:nginx'],
 	}
 
-	exec { 'docker:build:nginx:latest':
-		command => '/usr/bin/docker build -t nginx:latest .',
+	exec { 'docker:build:ifsc/nginx:latest':
+		command => '/usr/bin/docker build -t ifsc/nginx:latest .',
 		cwd => '/etc/docker/nginx',
-		subscribe => File['etc:docker:nginx:Dockerfile'],
-		refreshonly => true,
+		require => File['etc:docker:nginx:Dockerfile'],
+		unless => '/usr/bin/docker images | grep -q ifsc/nginx',
 		timeout => 1800,
 	}
 
@@ -524,27 +540,32 @@ class docker::nginx inherits docker {
 class docker::nginx::0 inherits docker::nginx {
 
 	# Para contêiner desatualizado
-	exec { 'docker:stop:nginx:latest:0':
+	exec { 'docker:stop:ifsc/nginx:latest:0':
 		command => '/usr/bin/docker stop nginx_latest_0',
 		subscribe => [
-			Exec['docker:build:nginx:latest'],
+			Exec['docker:build:ifsc/nginx:latest'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
+			Exec['git:mediawiki:skin:vector'],
+			File['media:wall0:www:wiki:images'],
+			File['media:wall0:www:owncloud:config'],
+			File['media:wall0:www:owncloud:data'],
+			File['media:wall0:www:owncloud:themes'],
 		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top nginx_latest_0',
 	}
 
 	# Remove contêiner parado
-	exec { 'docker:rm:nginx:latest:0':
+	exec { 'docker:rm:ifsc/nginx:latest:0':
 		command => '/usr/bin/docker rm nginx_latest_0',
-		require => Exec['docker:stop:nginx:latest:0'],
+		require => Exec['docker:stop:ifsc/nginx:latest:0'],
 		unless => '/usr/bin/docker top nginx_latest_0', # não está rodando
 		onlyif => '/usr/bin/docker diff nginx_latest_0', # contêiner existe (mesmo parado)
 	}
 
 	# Inicia um novo contêiner
-	exec { 'docker:run:nginx:latest:0':
+	exec { 'docker:run:ifsc/nginx:latest:0':
 		command => '/usr/bin/docker run -d -p 8010:80 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
@@ -561,9 +582,10 @@ class docker::nginx::0 inherits docker::nginx {
 			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
 			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
 			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
-			--name="nginx_latest_0" nginx:latest',
+			--name="nginx_latest_0" ifsc/nginx:latest',
 		require => [
-			Exec['docker:rm:nginx:latest:0'],
+			Exec['docker:build:ifsc/nginx:latest'],
+			Exec['docker:rm:ifsc/nginx:latest:0'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
 			File['etc:docker:nginx:config.php'],
@@ -585,27 +607,32 @@ class docker::nginx::0 inherits docker::nginx {
 class docker::nginx::1 inherits docker::nginx {
 
 	# Para contêiner desatualizado
-	exec { 'docker:stop:nginx:latest:1':
+	exec { 'docker:stop:ifsc/nginx:latest:1':
 		command => '/usr/bin/docker stop nginx_latest_1',
 		subscribe => [
-			Exec['docker:build:nginx:latest'],
+			Exec['docker:build:ifsc/nginx:latest'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
+			Exec['git:mediawiki:skin:vector'],
+			File['media:wall0:www:wiki:images'],
+			File['media:wall0:www:owncloud:config'],
+			File['media:wall0:www:owncloud:data'],
+			File['media:wall0:www:owncloud:themes'],
 		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top nginx_latest_1',
 	}
 	
 	# Remove contêiner parado
-	exec { 'docker:rm:nginx:latest:1':
+	exec { 'docker:rm:ifsc/nginx:latest:1':
 		command => '/usr/bin/docker rm nginx_latest_1',
-		require => Exec['docker:stop:nginx:latest:1'],
+		require => Exec['docker:stop:ifsc/nginx:latest:1'],
 		unless => '/usr/bin/docker top nginx_latest_1', # não está rodando
 		onlyif => '/usr/bin/docker diff nginx_latest_1', # contêiner existe (mesmo parado)
 	}
 
 	# Inicia um novo contêiner
-	exec { 'docker:run:nginx:latest:1':
+	exec { 'docker:run:ifsc/nginx:latest:1':
 		command => '/usr/bin/docker run -d -p 8011:80 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
@@ -622,9 +649,10 @@ class docker::nginx::1 inherits docker::nginx {
 			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
 			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
 			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
-			--name="nginx_latest_1" nginx:latest',
+			--name="nginx_latest_1" ifsc/nginx:latest',
 		require => [
-			Exec['docker:rm:nginx:latest:1'],
+			Exec['docker:build:ifsc/nginx:latest'],
+			Exec['docker:rm:ifsc/nginx:latest:1'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
 			File['etc:docker:nginx:config.php'],
@@ -663,15 +691,15 @@ class docker::varnish inherits docker {
 		require => File['etc:docker:varnish'],
 	}
 
-	exec { 'docker:build:varnish:latest':
-		command => '/usr/bin/docker build -t varnish:latest .',
+	exec { 'docker:build:ifsc/varnish:latest':
+		command => '/usr/bin/docker build -t ifsc/varnish:latest .',
 		cwd => '/etc/docker/varnish',
-		subscribe => File['etc:docker:varnish:Dockerfile'],
-		refreshonly => true,
+		require => File['etc:docker:varnish:Dockerfile'],
+		unless => '/usr/bin/docker images | grep -q ifsc/varnish',
 		timeout => 1800,
 	}
 
-	file { 'docker:varnish:latest:default.vcl':
+	file { 'docker:ifsc/varnish:latest:default.vcl':
 		path => '/etc/docker/varnish/default.vcl',
 		source => 'puppet:///modules/docker/default.vcl',
 		owner => root,
@@ -681,35 +709,36 @@ class docker::varnish inherits docker {
 	}
 
 	# Para contêiner desatualizado
-	exec { 'docker:stop:varnish:latest':
+	exec { 'docker:stop:ifsc/varnish:latest':
 		command => '/usr/bin/docker stop varnish_latest',
 		subscribe => [
-			Exec['docker:build:varnish:latest'],
-			File['docker:varnish:latest:default.vcl'],
+			Exec['docker:build:ifsc/varnish:latest'],
+			File['docker:ifsc/varnish:latest:default.vcl'],
 		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top varnish_latest',
 	}
 
 	# Remove contêiner parado
-	exec { 'docker:rm:varnish:latest':
+	exec { 'docker:rm:ifsc/varnish:latest':
 		command => '/usr/bin/docker rm varnish_latest',
-		require => Exec['docker:stop:varnish:latest'],
+		require => Exec['docker:stop:ifsc/varnish:latest'],
 		unless => '/usr/bin/docker top varnish_latest', # não está rodando
 		onlyif => '/usr/bin/docker diff varnish_latest', # contêiner existe (mesmo parado)
 	}
 
 	# Inicia um novo contêiner
-	exec { 'docker:run:varnish:latest':
+	exec { 'docker:run:ifsc/varnish:latest':
 		command => '/usr/bin/docker run -d -p 8000:80 \
 			-v /etc/hosts:/etc/hosts:ro \
 			-v /dev/log:/dev/log:rw \
 			-v /etc/docker/varnish/default.vcl:/etc/varnish/default.vcl:ro \
-			--name="varnish_latest" varnish:latest \
+			--name="varnish_latest" ifsc/varnish:latest \
 			/usr/sbin/varnishd -F -a :80 -s malloc,256M -f /etc/varnish/default.vcl',
 		require => [
-			Exec['docker:rm:varnish:latest'],
-			File['docker:varnish:latest:default.vcl'],
+			Exec['docker:build:ifsc/varnish:latest'],
+			Exec['docker:rm:ifsc/varnish:latest'],
+			File['docker:ifsc/varnish:latest:default.vcl'],
 		],
 		unless => '/usr/bin/docker top varnish_latest', # não está rodando
 	}

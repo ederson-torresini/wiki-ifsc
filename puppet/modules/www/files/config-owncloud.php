@@ -28,11 +28,11 @@ $CONFIG = array (
 	'dbpassword' => 'owncloud',
 	'memcached_servers' => array (
 		0 => array (
-			0 => 'wiki0',
+			0 => 'web0',
 			1 => 11211,
 		),
 		1 => array (
-			0 => 'wiki1',
+			0 => 'web1',
 			1 => 11211,
 		),
 	),

@@ -6,15 +6,15 @@ cat >> /etc/hosts <<FIM
 
 10.0.0.134 puppet syslog
 
-10.0.0.132 wiki0
+10.0.0.132 web0
 
-10.0.0.133 wiki1 mysql
+10.0.0.133 web1 mysql
 
 192.168.1.156 puppet-ext
 
-192.168.1.155 wiki0-ext
+192.168.1.155 web0-ext
 
-192.168.1.154 wiki1-ext
+192.168.1.154 web1-ext
 
 FIM
 cat >> /etc/network/interfaces <<FIM
@@ -42,6 +42,6 @@ puppet agent --enable
 puppet agent --test
 
 
-puppet cert sign wiki0.openstacklocal
-puppet cert sign wiki1.openstacklocal
+puppet cert sign web0.openstacklocal
+puppet cert sign web1.openstacklocal
 puppet agent --enable
