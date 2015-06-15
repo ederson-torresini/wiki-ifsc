@@ -1,8 +1,3 @@
--- MySQL dump 10.13  Distrib 5.6.23, for debian-linux-gnu (x86_64)
---
--- Host: localhost    Database: owncloud
--- ------------------------------------------------------
--- Server version	5.6.23-1wheezy
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -38,30 +33,8 @@ CREATE TABLE `oc_appconfig` (
 
 LOCK TABLES `oc_appconfig` WRITE;
 /*!40000 ALTER TABLE `oc_appconfig` DISABLE KEYS */;
-INSERT INTO `oc_appconfig` VALUES ('admin_migrate','enabled','yes'),('admin_migrate','installed_version','0.1'),('admin_migrate','types',''),('backgroundjob','lastjob','2'),('core','global_cache_gc_lastrun','1432603616'),('core','installedat','1432603156.6954'),('core','lastcron','1432603773'),('core','lastupdatedat','1432603156.6983'),('core','public_files','files_sharing/public.php'),('core','public_webdav','files_sharing/publicwebdav.php'),('core','remote_files','files/appinfo/remote.php'),('core','remote_webdav','files/appinfo/remote.php'),('files','enabled','yes'),('files','installed_version','1.1.9'),('files','types','filesystem'),('files_encryption','enabled','yes'),('files_encryption','installed_version','0.7.1'),('files_encryption','ocsid','166047'),('files_encryption','publicShareKeyId','pubShare_4cd42a8f'),('files_encryption','types','filesystem'),('files_odfviewer','enabled','yes'),('files_odfviewer','installed_version','0.1'),('files_odfviewer','types',''),('files_sharing','enabled','yes'),('files_sharing','installed_version','0.6.1'),('files_sharing','ocsid','166050'),('files_sharing','types','filesystem'),('files_trashbin','enabled','yes'),('files_trashbin','installed_version','0.6.2'),('files_trashbin','ocsid','166052'),('files_trashbin','types','filesystem'),('files_versions','enabled','yes'),('files_versions','installed_version','1.0.5'),('files_versions','ocsid','166053'),('files_versions','types','filesystem'),('files_videoviewer','enabled','yes'),('files_videoviewer','installed_version','0.1.3'),('files_videoviewer','ocsid','166054'),('files_videoviewer','types',''),('ownpad_lite','enabled','yes'),('ownpad_lite','installed_version','0.2'),('ownpad_lite','types',''),('provisioning_api','enabled','yes'),('provisioning_api','installed_version','0.2'),('provisioning_api','types','filesystem'),('reader','enabled','yes'),('reader','installed_version','1.0'),('reader','types',''),('user_migrate','enabled','yes'),('user_migrate','installed_version','0.1'),('user_migrate','types',''),('user_saml','enabled','yes'),('user_saml','installed_version','0.4'),('user_saml','saml_autocreate','on'),('user_saml','saml_default_group',''),('user_saml','saml_default_quota',''),('user_saml','saml_displayname_mapping','urn:oid:2.5.4.3'),('user_saml','saml_email_mapping','urn:oid:0.9.2342.19200300.100.1.3'),('user_saml','saml_force_saml_login','0'),('user_saml','saml_group_mapping',''),('user_saml','saml_protected_groups',''),('user_saml','saml_quota_mapping',''),('user_saml','saml_sp_source','idpcafe.ifsc.edu.br'),('user_saml','saml_ssp_path','/usr/share/simplesamlphp'),('user_saml','saml_update_user_data','on'),('user_saml','saml_username_mapping','urn:oid:0.9.2342.19200300.100.1.1'),('user_saml','types','prelogin,authentication');
+INSERT INTO `oc_appconfig` VALUES ('user_saml','enabled','yes'),('user_saml','installed_version','0.4'),('user_saml','saml_autocreate','on'),('user_saml','saml_default_group','saml20'),('user_saml','saml_default_quota',''),('user_saml','saml_displayname_mapping','urn:oid:2.5.4.3'),('user_saml','saml_email_mapping','urn:oid:0.9.2342.19200300.100.1.3'),('user_saml','saml_force_saml_login','0'),('user_saml','saml_group_mapping',''),('user_saml','saml_protected_groups',''),('user_saml','saml_quota_mapping',''),('user_saml','saml_sp_source','idpcafe.ifsc.edu.br'),('user_saml','saml_ssp_path','/usr/share/simplesamlphp'),('user_saml','saml_update_user_data','on'),('user_saml','saml_username_mapping','urn:oid:0.9.2342.19200300.100.1.1'),('user_saml','types','prelogin,authentication');
 /*!40000 ALTER TABLE `oc_appconfig` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `oc_eBook_library`
---
-
-DROP TABLE IF EXISTS `oc_eBook_library`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `oc_eBook_library` (
-  `filepath` varchar(200) COLLATE utf8_bin NOT NULL DEFAULT '',
-  `tags` varchar(100) COLLATE utf8_bin DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `oc_eBook_library`
---
-
-LOCK TABLES `oc_eBook_library` WRITE;
-/*!40000 ALTER TABLE `oc_eBook_library` DISABLE KEYS */;
-/*!40000 ALTER TABLE `oc_eBook_library` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -119,7 +92,7 @@ CREATE TABLE `oc_filecache` (
   KEY `fs_storage_mimetype` (`storage`,`mimetype`),
   KEY `fs_storage_mimepart` (`storage`,`mimepart`),
   KEY `fs_storage_size` (`storage`,`size`,`fileid`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -128,7 +101,6 @@ CREATE TABLE `oc_filecache` (
 
 LOCK TABLES `oc_filecache` WRITE;
 /*!40000 ALTER TABLE `oc_filecache` DISABLE KEYS */;
-INSERT INTO `oc_filecache` VALUES (3,3,'','d41d8cd98f00b204e9800998ecf8427e',-1,'',6,3,163,1432603166,1432603165,0,0,'5563ca1e29534',23),(6,3,'cache','0fea6a13c52b4d4725368f24b045ca84',3,'cache',6,3,0,1432603156,1432603156,0,0,'5563ca14cb01f',31),(9,3,'files','45b963397aa40d4a0063e0d85e4fe7a1',3,'files',6,3,163,1432603157,1432603157,0,0,'5563ca153095f',31),(12,3,'files/welcome.txt','c49a144e772727f51b75705170e88a43',9,'welcome.txt',12,9,163,1432603157,1432603157,0,0,'33f5426ecad6bf6969370d5f19f03860',27),(15,3,'thumbnails','3b8779ba05b8f0aed49650f3ff8beb4b',3,'thumbnails',6,3,391,1432603166,1432603166,0,0,'5563ca1e29f73',31),(18,3,'thumbnails/12','8f5aef7e96ff2fdf0521f79e40b29e7a',15,'12',6,3,391,1432603166,1432603166,0,0,'5563ca1e2a939',31),(21,3,'thumbnails/12/36-36.png','3a22ce5311f07fbadd8d816ba571e34d',18,'36-36.png',18,15,391,1432603166,1432603166,0,0,'e9016ec62803f4b615080365593fa82b',27),(22,6,'','d41d8cd98f00b204e9800998ecf8427e',-1,'',6,3,0,1432603699,1432603698,0,0,'5563cc3328adb',23),(25,6,'files_encryption','171a8829416be21834bef1b79079dde8',22,'files_encryption',6,3,0,1432603699,1432603699,0,0,'5563cc33294d3',31),(28,6,'files_encryption/public_keys','133cb361e8d95984f4bbf56c5e7fa371',25,'public_keys',6,3,0,1432603699,1432603699,0,0,'5563cc3323395',31);
 /*!40000 ALTER TABLE `oc_filecache` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -248,7 +220,7 @@ CREATE TABLE `oc_jobs` (
   `last_run` int(11) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `job_class_index` (`class`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +229,6 @@ CREATE TABLE `oc_jobs` (
 
 LOCK TABLES `oc_jobs` WRITE;
 /*!40000 ALTER TABLE `oc_jobs` DISABLE KEYS */;
-INSERT INTO `oc_jobs` VALUES (2,'OC\\Cache\\FileGlobalGC','null',1432603773);
 /*!40000 ALTER TABLE `oc_jobs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -303,7 +274,7 @@ CREATE TABLE `oc_mimetypes` (
   `mimetype` varchar(255) COLLATE utf8_bin NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `mimetype_id_index` (`mimetype`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -312,7 +283,7 @@ CREATE TABLE `oc_mimetypes` (
 
 LOCK TABLES `oc_mimetypes` WRITE;
 /*!40000 ALTER TABLE `oc_mimetypes` DISABLE KEYS */;
-INSERT INTO `oc_mimetypes` VALUES (3,'httpd'),(6,'httpd/unix-directory'),(15,'image'),(18,'image/png'),(9,'text'),(12,'text/plain');
+INSERT INTO `oc_mimetypes` VALUES (2,'httpd'),(5,'httpd/unix-directory'),(8,'text'),(11,'text/plain');
 /*!40000 ALTER TABLE `oc_mimetypes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -338,7 +309,6 @@ CREATE TABLE `oc_preferences` (
 
 LOCK TABLES `oc_preferences` WRITE;
 /*!40000 ALTER TABLE `oc_preferences` DISABLE KEYS */;
-INSERT INTO `oc_preferences` VALUES ('admin','files_encryption','migration_status','0'),('admin','login','lastLogin','1432603156');
 /*!40000 ALTER TABLE `oc_preferences` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -481,7 +451,7 @@ CREATE TABLE `oc_storages` (
   `numeric_id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`numeric_id`),
   UNIQUE KEY `storages_id_index` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -490,7 +460,6 @@ CREATE TABLE `oc_storages` (
 
 LOCK TABLES `oc_storages` WRITE;
 /*!40000 ALTER TABLE `oc_storages` DISABLE KEYS */;
-INSERT INTO `oc_storages` VALUES ('home::admin',3),('local::/var/www/html/owncloud/data/',6);
 /*!40000 ALTER TABLE `oc_storages` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -515,7 +484,7 @@ CREATE TABLE `oc_users` (
 
 LOCK TABLES `oc_users` WRITE;
 /*!40000 ALTER TABLE `oc_users` DISABLE KEYS */;
-INSERT INTO `oc_users` VALUES ('admin',NULL,'1|$2y$10$6duFSb0z4AHO5IlZg7H9IOzSsVgcu5oenYjrw24WjB3cwYl2fM0q2');
+INSERT INTO `oc_users` VALUES ('admin',NULL,'1|$2y$10$9hhKniVcw/xKI9GLmE8n6eibsV42ZSwZrDlQRbayHC6D7Bjm/QQNi');
 /*!40000 ALTER TABLE `oc_users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -581,4 +550,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-05-25 22:30:02
+-- Dump completed on 2015-06-12 16:58:52

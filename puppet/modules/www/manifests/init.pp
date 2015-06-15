@@ -26,6 +26,15 @@ class www {
 		require => File['var:www:html'],
 	}
 
+	file { 'var:www:html:post.js':
+		path => '/var/www/html/post.js',
+		source => 'puppet:///modules/www/post.js',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['var:www:html'],
+	}
+
 	file { 'media:wall0:www':
 		path => '/media/wall0/www',
 		ensure => directory,
@@ -118,7 +127,7 @@ class www::mediawiki inherits www {
 
 class www::owncloud inherits www {
 
-	$VERSAO = 'v8.0.3'
+	$VERSAO = 'v8.0.4'
 
 	exec { 'git:owncloud:core':
 		command => "/usr/bin/git clone --depth 1 https://github.com/owncloud/core.git -b $VERSAO /var/www/html/owncloud",
@@ -135,16 +144,6 @@ class www::owncloud inherits www {
 		command => "/usr/bin/git clone --depth 1 https://github.com/owncloud/apps.git -b $VERSAO /var/www/html/owncloud/apps+",
 		creates => '/var/www/html/owncloud/apps+/.git',
 		require => Exec['git:owncloud:core'],
-	}
-
-	# Correção de código para evitar problemas com segurança (CSP)
-	file { 'git:owncloud:apps+:utils.js':
-		path => '/var/www/html/owncloud/apps+/user_saml/js/utils.js',
-		source => 'puppet:///modules/www/utils.js',
-		owner => www-data,
-		group => www-data,
-		mode => 0440,
-		require => Exec['git:owncloud:apps+'],
 	}
 
 	file { 'media:wall0:www:owncloud':
@@ -202,16 +201,6 @@ class www::owncloud inherits www {
 		require => File['media:wall0:www:owncloud'],
 	}
 
-	# Apenas para rodar as máquinas Docker (montagem do arquivo).
-	file { 'git:owncloud:post.js':
-		path => '/var/www/html/owncloud/post.js',
-		ensure => file,
-		owner => www-data,
-		group => www-data,
-		mode => 0640,
-		require => Exec['git:owncloud:core'],
-	}
-
 	file { 'owncloud.sql':
 		path => '/etc/mysql/owncloud.sql',
 		source => 'puppet:///modules/www/owncloud.sql',
@@ -261,7 +250,6 @@ class www::owncloud inherits www {
 			Exec['git:owncloud:core'],
 			Exec['git:owncloud:3rdparty'],
 			Exec['git:owncloud:apps+'],
-			File['git:owncloud:apps+:utils.js'],
 			File['media:wall0:www:owncloud:config'],
 			File['git:owncloud:data'],
 			File['media:wall0:www:owncloud:data'],

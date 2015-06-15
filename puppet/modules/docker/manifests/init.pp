@@ -236,6 +236,15 @@ class docker::php-fpm inherits docker {
 		require => File['etc:docker:php-fpm'],
 	}
 
+	file { 'etc:docker:php-fpm:post.php':
+		path => '/etc/docker/php-fpm/post.php',
+		source => 'puppet:///modules/docker/post.php',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:php-fpm'],
+	}
+
 	# Os 2 próximos arquivos foram gerados com o comando:
 	# openssl req -new -x509 -nodes -days 365 -keyout saml.key -out saml.crt
 	file { 'etc:docker:php-fpm:saml.key':
@@ -308,8 +317,14 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
+			File['etc:docker:php-fpm:config.php'],
+			File['etc:docker:php-fpm:authsources.php'],
+			File['etc:docker:php-fpm:saml20-idp-remote.php'],
+			File['etc:docker:php-fpm:post.php'],
+			File['etc:docker:php-fpm:saml.key'],
+			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
-			Exec['git:mediawiki:skin:vector'],
+			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
 			File['media:wall0:www:owncloud:config'],
 			File['media:wall0:www:owncloud:data'],
@@ -339,6 +354,7 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
+			-v /etc/docker/php-fpm/post.php:/usr/share/simplesamlphp/templates/post.php:ro \
 			-v /etc/docker/php-fpm/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
@@ -357,10 +373,11 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:config.php'],
 			File['etc:docker:php-fpm:authsources.php'],
 			File['etc:docker:php-fpm:saml20-idp-remote.php'],
+			File['etc:docker:php-fpm:post.php'],
 			File['etc:docker:php-fpm:saml.key'],
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
-			Exec['git:mediawiki:skin:vector'],
+			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
 			File['media:wall0:www:owncloud:config'],
 			File['media:wall0:www:owncloud:data'],
@@ -381,8 +398,14 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
+			File['etc:docker:php-fpm:config.php'],
+			File['etc:docker:php-fpm:authsources.php'],
+			File['etc:docker:php-fpm:saml20-idp-remote.php'],
+			File['etc:docker:php-fpm:post.php'],
+			File['etc:docker:php-fpm:saml.key'],
+			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
-			Exec['git:mediawiki:skin:vector'],
+			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
 			File['media:wall0:www:owncloud:config'],
 			File['media:wall0:www:owncloud:data'],
@@ -412,6 +435,7 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
+			-v /etc/docker/php-fpm/post.php:/usr/share/simplesamlphp/templates/post.php:ro \
 			-v /etc/docker/php-fpm/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
@@ -423,17 +447,18 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			--name="php-fpm_latest_1" ifsc/php-fpm:latest',
 		require => [
 			Exec['docker:build:ifsc/php-fpm:latest'],
-			Exec['docker:rm:ifsc/php-fpm:latest:0'],
+			Exec['docker:rm:ifsc/php-fpm:latest:1'],
 			File['etc:docker:php-fpm:php-fpm.conf'],
 			File['etc:docker:php-fpm:php.ini'],
 			File['etc:docker:php-fpm:www.conf'],
 			File['etc:docker:php-fpm:config.php'],
 			File['etc:docker:php-fpm:authsources.php'],
 			File['etc:docker:php-fpm:saml20-idp-remote.php'],
+			File['etc:docker:php-fpm:post.php'],
 			File['etc:docker:php-fpm:saml.key'],
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
-			Exec['git:mediawiki:skin:vector'],
+			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
 			File['media:wall0:www:owncloud:config'],
 			File['media:wall0:www:owncloud:data'],
@@ -509,6 +534,15 @@ class docker::nginx inherits docker {
 		require => File['etc:docker:nginx'],
 	}
 
+	file { 'etc:docker:nginx:post.php':
+		path => '/etc/docker/nginx/post.php',
+		source => 'puppet:///modules/docker/post.php',
+		owner => root,
+		group => root,
+		mode => 0644,
+		require => File['etc:docker:nginx'],
+	}
+
 	file { 'etc:docker:nginx:saml.key':
 		path => '/etc/docker/nginx/saml.key',
 		source => 'puppet:///modules/docker/saml.key',
@@ -546,7 +580,13 @@ class docker::nginx::0 inherits docker::nginx {
 			Exec['docker:build:ifsc/nginx:latest'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
-			Exec['git:mediawiki:skin:vector'],
+			File['etc:docker:nginx:config.php'],
+			File['etc:docker:nginx:authsources.php'],
+			File['etc:docker:nginx:saml20-idp-remote.php'],
+			File['etc:docker:nginx:post.php'],
+			File['etc:docker:nginx:saml.key'],
+			File['etc:docker:nginx:saml.crt'],
+			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
 			File['media:wall0:www:owncloud:config'],
 			File['media:wall0:www:owncloud:data'],
@@ -575,6 +615,7 @@ class docker::nginx::0 inherits docker::nginx {
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
+			-v /etc/docker/nginx/post.php:/usr/share/simplesamlphp/templates/post.php:ro \
 			-v /etc/docker/nginx/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
@@ -591,9 +632,10 @@ class docker::nginx::0 inherits docker::nginx {
 			File['etc:docker:nginx:config.php'],
 			File['etc:docker:nginx:authsources.php'],
 			File['etc:docker:nginx:saml20-idp-remote.php'],
+			File['etc:docker:nginx:post.php'],
 			File['etc:docker:nginx:saml.key'],
 			File['etc:docker:nginx:saml.crt'],
-			Exec['git:mediawiki:skin:vector'],
+			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
 			File['media:wall0:www:owncloud:config'],
 			File['media:wall0:www:owncloud:data'],
@@ -613,7 +655,13 @@ class docker::nginx::1 inherits docker::nginx {
 			Exec['docker:build:ifsc/nginx:latest'],
 			File['etc:docker:nginx:nginx.conf'],
 			File['etc:docker:nginx:fastcgi_params'],
-			Exec['git:mediawiki:skin:vector'],
+			File['etc:docker:nginx:config.php'],
+			File['etc:docker:nginx:authsources.php'],
+			File['etc:docker:nginx:saml20-idp-remote.php'],
+			File['etc:docker:nginx:post.php'],
+			File['etc:docker:nginx:saml.key'],
+			File['etc:docker:nginx:saml.crt'],
+			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
 			File['media:wall0:www:owncloud:config'],
 			File['media:wall0:www:owncloud:data'],
@@ -642,6 +690,7 @@ class docker::nginx::1 inherits docker::nginx {
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
+			-v /etc/docker/nginx/post.php:/usr/share/simplesamlphp/templates/post.php:ro \
 			-v /etc/docker/nginx/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
@@ -658,9 +707,10 @@ class docker::nginx::1 inherits docker::nginx {
 			File['etc:docker:nginx:config.php'],
 			File['etc:docker:nginx:authsources.php'],
 			File['etc:docker:nginx:saml20-idp-remote.php'],
+			File['etc:docker:nginx:post.php'],
 			File['etc:docker:nginx:saml.key'],
 			File['etc:docker:nginx:saml.crt'],
-			Exec['git:mediawiki:skin:vector'],
+			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
 			File['media:wall0:www:owncloud:config'],
 			File['media:wall0:www:owncloud:data'],
