@@ -34,12 +34,12 @@ ifup -a
 2. Pode-se ver, no comando abaixo, os IPs atribuídos dinamicamente a cada interface dos servidores após a execução do comando `ifup -a`. Preferi a simplicidade do arquivo `/etc/hosts` ao DNS (dado o reduzido tamanho do cenário):
 ```
 cat >> /etc/hosts <<FIM
-10.0.0.134 puppet syslog
-10.0.0.132 web0
-10.0.0.133 web1 mysql
-192.168.1.156 puppet-ext
-192.168.1.155 web0-ext
-192.168.1.154 web1-ext
+10.0.0.135 puppet syslog
+10.0.0.136 web0
+10.0.0.137 web1 mysql
+192.168.1.158 puppet-ext
+192.168.1.159 web0-ext
+192.168.1.160 web1-ext
 FIM
 ```
 3. Em seguida, foi instalado o agente Puppet em cada servidor e colocado em espera:

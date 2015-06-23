@@ -13,6 +13,14 @@ class docker {
 		require => Package['docker.io'],
 	}
 
+	$hosts = "--add-host=puppet:10.0.0.135 \
+		--add-host=syslog:10.0.0.135 \
+		--add-host=web0:10.0.0.136 \
+		--add-host=web1:10.0.0.137 \
+		--add-host=mysql:10.0.0.137 \
+		--add-host=puppet-ext:192.168.1.158 \
+		--add-host=web0-ext:192.168.1.159 \
+		--add-host=web1-ext:192.168.1.160"
 }
 
 class docker::haproxy inherits docker {
@@ -85,12 +93,12 @@ class docker::haproxy inherits docker {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:ifsc/haproxy:latest':
-		command => '/usr/bin/docker run -d -p 80:80 -p 443:443 -p 13306:3306 \
-			-v /etc/hosts:/etc/hosts:ro \
+		command => "/usr/bin/docker run -d -p 80:80 -p 443:443 -p 13306:3306 \
+			$hosts \
 			-v /dev/log:/dev/log:rw \
 			-v /etc/docker/haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg:ro \
 			-v /etc/docker/haproxy/https.pem:/etc/ssl/certs/https.pem:ro \
-			--name="haproxy_latest" ifsc/haproxy:latest',
+			--name=haproxy_latest ifsc/haproxy:latest",
 		require => [
 			Exec['docker:build:ifsc/haproxy:latest'],
 			Exec['docker:rm:ifsc/haproxy:latest'],
@@ -148,11 +156,11 @@ class docker::memcached inherits docker {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:ifsc/memcached:latest':
-		command => '/usr/bin/docker run -d -p 11211:11211 \
-			-v /etc/hosts:/etc/hosts:ro \
+		command => "/usr/bin/docker run -d -p 11211:11211 \
+			$hosts \
 			-v /dev/log:/dev/log:rw \
-			--name="memcached_latest" ifsc/memcached:latest \
-			/usr/bin/memcached -u memcache -m 256',
+			--name=memcached_latest ifsc/memcached:latest \
+			/usr/bin/memcached -u memcache -m 256",
 		require => [
 			Exec['docker:build:ifsc/memcached:latest'],
 			Exec['docker:rm:ifsc/memcached:latest'],
@@ -344,8 +352,8 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:ifsc/php-fpm:latest:0':
-		command => '/usr/bin/docker run -d -p 8020:80 \
-			-v /etc/hosts:/etc/hosts:ro \
+		command => "/usr/bin/docker run -d -p 8020:80 \
+			$hosts \
 			-v /dev/log:/dev/log:rw \
 			-v /dev/urandom:/dev/urandom:rw \
 			-v /etc/docker/php-fpm/php-fpm.conf:/etc/php5/fpm/php-fpm.conf:ro \
@@ -363,7 +371,7 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
 			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
 			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
-			--name="php-fpm_latest_0" ifsc/php-fpm:latest',
+			--name=php-fpm_latest_0 ifsc/php-fpm:latest",
 		require => [
 			Exec['docker:build:ifsc/php-fpm:latest'],
 			Exec['docker:rm:ifsc/php-fpm:latest:0'],
@@ -425,8 +433,8 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:ifsc/php-fpm:latest:1':
-		command => '/usr/bin/docker run -d -p 8021:80 \
-			-v /etc/hosts:/etc/hosts:ro \
+		command => "/usr/bin/docker run -d -p 8021:80 \
+			$hosts \
 			-v /dev/log:/dev/log:rw \
 			-v /dev/urandom:/dev/urandom:rw \
 			-v /etc/docker/php-fpm/php-fpm.conf:/etc/php5/fpm/php-fpm.conf:ro \
@@ -444,7 +452,7 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
 			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
 			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
-			--name="php-fpm_latest_1" ifsc/php-fpm:latest',
+			--name=php-fpm_latest_1 ifsc/php-fpm:latest",
 		require => [
 			Exec['docker:build:ifsc/php-fpm:latest'],
 			Exec['docker:rm:ifsc/php-fpm:latest:1'],
@@ -606,8 +614,8 @@ class docker::nginx::0 inherits docker::nginx {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:ifsc/nginx:latest:0':
-		command => '/usr/bin/docker run -d -p 8010:80 \
-			-v /etc/hosts:/etc/hosts:ro \
+		command => "/usr/bin/docker run -d -p 8010:80 \
+			$hosts \
 			-v /dev/log:/dev/log:rw \
 			-v /dev/urandom:/dev/urandom:rw \
 			-v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
@@ -623,7 +631,7 @@ class docker::nginx::0 inherits docker::nginx {
 			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
 			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
 			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
-			--name="nginx_latest_0" ifsc/nginx:latest',
+			--name=nginx_latest_0 ifsc/nginx:latest",
 		require => [
 			Exec['docker:build:ifsc/nginx:latest'],
 			Exec['docker:rm:ifsc/nginx:latest:0'],
@@ -681,8 +689,8 @@ class docker::nginx::1 inherits docker::nginx {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:ifsc/nginx:latest:1':
-		command => '/usr/bin/docker run -d -p 8011:80 \
-			-v /etc/hosts:/etc/hosts:ro \
+		command => "/usr/bin/docker run -d -p 8011:80 \
+			$hosts \
 			-v /dev/log:/dev/log:rw \
 			-v /dev/urandom:/dev/urandom:rw \
 			-v /etc/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
@@ -698,7 +706,7 @@ class docker::nginx::1 inherits docker::nginx {
 			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
 			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
 			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
-			--name="nginx_latest_1" ifsc/nginx:latest',
+			--name=nginx_latest_1 ifsc/nginx:latest",
 		require => [
 			Exec['docker:build:ifsc/nginx:latest'],
 			Exec['docker:rm:ifsc/nginx:latest:1'],
@@ -779,12 +787,12 @@ class docker::varnish inherits docker {
 
 	# Inicia um novo contêiner
 	exec { 'docker:run:ifsc/varnish:latest':
-		command => '/usr/bin/docker run -d -p 8000:80 \
-			-v /etc/hosts:/etc/hosts:ro \
+		command => "/usr/bin/docker run -d -p 8000:80 \
+			$hosts \
 			-v /dev/log:/dev/log:rw \
 			-v /etc/docker/varnish/default.vcl:/etc/varnish/default.vcl:ro \
-			--name="varnish_latest" ifsc/varnish:latest \
-			/usr/sbin/varnishd -F -a :80 -s malloc,256M -f /etc/varnish/default.vcl',
+			--name=varnish_latest ifsc/varnish:latest \
+			/usr/sbin/varnishd -F -a :80 -s malloc,256M -f /etc/varnish/default.vcl",
 		require => [
 			Exec['docker:build:ifsc/varnish:latest'],
 			Exec['docker:rm:ifsc/varnish:latest'],
