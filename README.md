@@ -75,6 +75,7 @@ A partir deste ponto, serão necessárias algumas rodadas de execução nos agen
 
 # Instalação
 Após essas rodadas iniciais - duas são suficientes (ou [1 hora](https://docs.puppetlabs.com/references/latest/configuration.html#runinterval)) -, é preciso desbloquear duas "travas" da instalação:
+
 1. Chavear o modo de operação do Galera MySQL: de `bootstrap` para `cluster` no arquivo `puppet/manifests/site.pp` após a instalação do MySQL. Para sabe quando deve fazê-lo, o tamanho (`wsrep_cluster_size`) deve estar em `3` e o estado de operação (`wsrep_ready`) em `ON` no resultado do comando: `mysql --user=root --password=root --host mysql --port 13306 -e "show status like '%wsrep_%';"`.
 2. Instalar manualmente a Mediawiki (a página inicial guiará para a instalação da base de dados e configuração básica) e, em seguida, liberar o recurso `file { 'LocalSettings.php' ... }` em `puppet/modules/www/manifests/init.pp`. Use os parâmetros do arquivos `LocalSettings.php` como referência na instalação Web. E pode ignorar o arquivo gerado - ele será mais simples que este do repositório.
 
