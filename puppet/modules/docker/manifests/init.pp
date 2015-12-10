@@ -33,7 +33,7 @@ class docker::haproxy inherits docker {
 		mode => 0750,
 		require => File['etc:docker'],
 	}
-	
+
 	file { 'etc:docker:haproxy:Dockerfile':
 		path => '/etc/docker/haproxy/Dockerfile',
 		source => 'puppet:///modules/docker/Dockerfile-haproxy',
@@ -189,7 +189,7 @@ class docker::php-fpm inherits docker {
 		mode => 0640,
 		require => File['etc:docker:php-fpm'],
 	}
-	
+
 	file { 'etc:docker:php-fpm:php-fpm.conf':
 		path => '/etc/docker/php-fpm/php-fpm.conf',
 		source => 'puppet:///modules/docker/php-fpm.conf',
@@ -238,15 +238,6 @@ class docker::php-fpm inherits docker {
 	file { 'etc:docker:php-fpm:saml20-idp-remote.php':
 		path => '/etc/docker/php-fpm/saml20-idp-remote.php',
 		source => 'puppet:///modules/docker/saml20-idp-remote.php',
-		owner => root,
-		group => root,
-		mode => 0644,
-		require => File['etc:docker:php-fpm'],
-	}
-
-	file { 'etc:docker:php-fpm:post.php':
-		path => '/etc/docker/php-fpm/post.php',
-		source => 'puppet:///modules/docker/post.php',
 		owner => root,
 		group => root,
 		mode => 0644,
@@ -316,7 +307,7 @@ class docker::php-fpm::limpeza {
 }
 
 class docker::php-fpm::0 inherits docker::php-fpm {
-	
+
 	# Para contêiner desatualizado
 	exec { 'docker:stop:ifsc/php-fpm:latest:0':
 		command => '/usr/bin/docker stop php-fpm_latest_0',
@@ -328,15 +319,11 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:config.php'],
 			File['etc:docker:php-fpm:authsources.php'],
 			File['etc:docker:php-fpm:saml20-idp-remote.php'],
-			File['etc:docker:php-fpm:post.php'],
 			File['etc:docker:php-fpm:saml.key'],
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
-			File['media:wall0:www:owncloud:config'],
-			File['media:wall0:www:owncloud:data'],
-			File['media:wall0:www:owncloud:themes'],
 		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top php-fpm_latest_0',
@@ -362,15 +349,11 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/php-fpm/post.php:/usr/share/simplesamlphp/templates/post.php:ro \
 			-v /etc/docker/php-fpm/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
 			-v /var/www/html:/var/www/html:ro \
 			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
-			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
-			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
-			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
 			--name=php-fpm_latest_0 ifsc/php-fpm:latest",
 		require => [
 			Exec['docker:build:ifsc/php-fpm:latest'],
@@ -381,23 +364,19 @@ class docker::php-fpm::0 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:config.php'],
 			File['etc:docker:php-fpm:authsources.php'],
 			File['etc:docker:php-fpm:saml20-idp-remote.php'],
-			File['etc:docker:php-fpm:post.php'],
 			File['etc:docker:php-fpm:saml.key'],
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
-			File['media:wall0:www:owncloud:config'],
-			File['media:wall0:www:owncloud:data'],
-			File['media:wall0:www:owncloud:themes'],
 		],
 		unless => '/usr/bin/docker top php-fpm_latest_0', # não está rodando
 	}
-	
+
 }
 
 class docker::php-fpm::1 inherits docker::php-fpm {
-	
+
 	# Para contêiner desatualizado
 	exec { 'docker:stop:ifsc/php-fpm:latest:1':
 		command => '/usr/bin/docker stop php-fpm_latest_1',
@@ -409,15 +388,11 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:config.php'],
 			File['etc:docker:php-fpm:authsources.php'],
 			File['etc:docker:php-fpm:saml20-idp-remote.php'],
-			File['etc:docker:php-fpm:post.php'],
 			File['etc:docker:php-fpm:saml.key'],
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
-			File['media:wall0:www:owncloud:config'],
-			File['media:wall0:www:owncloud:data'],
-			File['media:wall0:www:owncloud:themes'],
 		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top php-fpm_latest_1',
@@ -443,15 +418,11 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			-v /etc/docker/php-fpm/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/php-fpm/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/php-fpm/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/php-fpm/post.php:/usr/share/simplesamlphp/templates/post.php:ro \
 			-v /etc/docker/php-fpm/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/php-fpm/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /media/wall0/php-fpm/sessions:/var/lib/php5/sessions:rw \
 			-v /var/www/html:/var/www/html:ro \
 			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
-			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
-			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
-			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
 			--name=php-fpm_latest_1 ifsc/php-fpm:latest",
 		require => [
 			Exec['docker:build:ifsc/php-fpm:latest'],
@@ -462,15 +433,11 @@ class docker::php-fpm::1 inherits docker::php-fpm {
 			File['etc:docker:php-fpm:config.php'],
 			File['etc:docker:php-fpm:authsources.php'],
 			File['etc:docker:php-fpm:saml20-idp-remote.php'],
-			File['etc:docker:php-fpm:post.php'],
 			File['etc:docker:php-fpm:saml.key'],
 			File['etc:docker:php-fpm:saml.crt'],
 			File['media:wall0:php-fpm:sessions'],
 			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
-			File['media:wall0:www:owncloud:config'],
-			File['media:wall0:www:owncloud:data'],
-			File['media:wall0:www:owncloud:themes'],
 		],
 		unless => '/usr/bin/docker top php-fpm_latest_1', # não está rodando
 	}
@@ -487,7 +454,7 @@ class docker::nginx inherits docker {
 		mode => 0750,
 		require => File['etc:docker'],
 	}
-	
+
 	file { 'etc:docker:nginx:Dockerfile':
 		path => '/etc/docker/nginx/Dockerfile',
 		source => 'puppet:///modules/docker/Dockerfile-nginx',
@@ -542,15 +509,6 @@ class docker::nginx inherits docker {
 		require => File['etc:docker:nginx'],
 	}
 
-	file { 'etc:docker:nginx:post.php':
-		path => '/etc/docker/nginx/post.php',
-		source => 'puppet:///modules/docker/post.php',
-		owner => root,
-		group => root,
-		mode => 0644,
-		require => File['etc:docker:nginx'],
-	}
-
 	file { 'etc:docker:nginx:saml.key':
 		path => '/etc/docker/nginx/saml.key',
 		source => 'puppet:///modules/docker/saml.key',
@@ -591,14 +549,10 @@ class docker::nginx::0 inherits docker::nginx {
 			File['etc:docker:nginx:config.php'],
 			File['etc:docker:nginx:authsources.php'],
 			File['etc:docker:nginx:saml20-idp-remote.php'],
-			File['etc:docker:nginx:post.php'],
 			File['etc:docker:nginx:saml.key'],
 			File['etc:docker:nginx:saml.crt'],
 			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
-			File['media:wall0:www:owncloud:config'],
-			File['media:wall0:www:owncloud:data'],
-			File['media:wall0:www:owncloud:themes'],
 		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top nginx_latest_0',
@@ -623,14 +577,10 @@ class docker::nginx::0 inherits docker::nginx {
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/nginx/post.php:/usr/share/simplesamlphp/templates/post.php:ro \
 			-v /etc/docker/nginx/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
 			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
-			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
-			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
-			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
 			--name=nginx_latest_0 ifsc/nginx:latest",
 		require => [
 			Exec['docker:build:ifsc/nginx:latest'],
@@ -640,14 +590,10 @@ class docker::nginx::0 inherits docker::nginx {
 			File['etc:docker:nginx:config.php'],
 			File['etc:docker:nginx:authsources.php'],
 			File['etc:docker:nginx:saml20-idp-remote.php'],
-			File['etc:docker:nginx:post.php'],
 			File['etc:docker:nginx:saml.key'],
 			File['etc:docker:nginx:saml.crt'],
 			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
-			File['media:wall0:www:owncloud:config'],
-			File['media:wall0:www:owncloud:data'],
-			File['media:wall0:www:owncloud:themes'],
 		],
 		unless => '/usr/bin/docker top nginx_latest_0', # não está rodando
 	}
@@ -666,19 +612,15 @@ class docker::nginx::1 inherits docker::nginx {
 			File['etc:docker:nginx:config.php'],
 			File['etc:docker:nginx:authsources.php'],
 			File['etc:docker:nginx:saml20-idp-remote.php'],
-			File['etc:docker:nginx:post.php'],
 			File['etc:docker:nginx:saml.key'],
 			File['etc:docker:nginx:saml.crt'],
 			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
-			File['media:wall0:www:owncloud:config'],
-			File['media:wall0:www:owncloud:data'],
-			File['media:wall0:www:owncloud:themes'],
 		],
 		refreshonly => true,
 		onlyif => '/usr/bin/docker top nginx_latest_1',
 	}
-	
+
 	# Remove contêiner parado
 	exec { 'docker:rm:ifsc/nginx:latest:1':
 		command => '/usr/bin/docker rm nginx_latest_1',
@@ -698,14 +640,10 @@ class docker::nginx::1 inherits docker::nginx {
 			-v /etc/docker/nginx/config.php:/etc/simplesamlphp/config.php:ro \
 			-v /etc/docker/nginx/authsources.php:/etc/simplesamlphp/authsources.php:ro \
 			-v /etc/docker/nginx/saml20-idp-remote.php:/etc/simplesamlphp/metadata/saml20-idp-remote.php:ro \
-			-v /etc/docker/nginx/post.php:/usr/share/simplesamlphp/templates/post.php:ro \
 			-v /etc/docker/nginx/saml.key:/etc/ssl/certs/saml.key:ro \
 			-v /etc/docker/nginx/saml.crt:/etc/ssl/certs/saml.crt:ro \
 			-v /var/www/html:/var/www/html:ro \
 			-v /media/wall0/www/wiki/images:/var/www/html/wiki/images:rw \
-			-v /media/wall0/www/owncloud/config:/var/www/html/owncloud/config:rw \
-			-v /media/wall0/www/owncloud/data:/var/www/html/owncloud/data:rw \
-			-v /media/wall0/www/owncloud/themes:/var/www/html/owncloud/themes:rw \
 			--name=nginx_latest_1 ifsc/nginx:latest",
 		require => [
 			Exec['docker:build:ifsc/nginx:latest'],
@@ -715,14 +653,10 @@ class docker::nginx::1 inherits docker::nginx {
 			File['etc:docker:nginx:config.php'],
 			File['etc:docker:nginx:authsources.php'],
 			File['etc:docker:nginx:saml20-idp-remote.php'],
-			File['etc:docker:nginx:post.php'],
 			File['etc:docker:nginx:saml.key'],
 			File['etc:docker:nginx:saml.crt'],
 			File['var:www:html'],
 			File['media:wall0:www:wiki:images'],
-			File['media:wall0:www:owncloud:config'],
-			File['media:wall0:www:owncloud:data'],
-			File['media:wall0:www:owncloud:themes'],
 		],
 		unless => '/usr/bin/docker top nginx_latest_1', # não está rodando
 	}

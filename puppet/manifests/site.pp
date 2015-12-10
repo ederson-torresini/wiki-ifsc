@@ -47,7 +47,6 @@ node "web0" {
 	include docker::nginx::1
 	include docker::varnish
 	include www::mediawiki
-	include www::owncloud
 
 }
 
@@ -63,6 +62,5 @@ node "web1" {
 	include docker::nginx::1
 	include docker::varnish
 	include www::mediawiki
-	include www::owncloud
 
 }
