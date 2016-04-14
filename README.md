@@ -124,3 +124,9 @@ interface GigabitEthernet0/24
     switchport trunk allowed vlan 110,900
     switchport mode trunk
 ```
+
+# Máquinas físicas
+Em `coreos-0`, foi [iniciado o CoreOS](https://coreos.com/os/docs/latest/booting-with-iso.html) e feita a [instalação e configuração manual](https://coreos.com/os/docs/latest/installing-to-disk.html). No arquivo único de configuração,  `coreos-0.yaml`, tem-se:
+- Minha chave pública para acesso via SSH.
+- Configuração das interfaces de rede, incluindo agregada e VLANs.
+- Sincronização de reógio por NTP.

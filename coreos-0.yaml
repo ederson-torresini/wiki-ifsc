@@ -1,0 +1,120 @@
+#cloud-config
+hostname: coreos-0
+ssh_authorized_keys:
+  - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDm6baOg9AXEsNZCDwmIr32SEwfhoVvmT4WrsfMtJlPD5zfpGydC0oNbBtmB7DbwANSs79hCgsQw2SGgOumUQMPTCjdrK3DgpUuHZHnLbf/LdOvaM34HzVEwSJ8E24H3272ypdW9LxpNfDp3lwVv9UHQqc1pZ69nQkkEOq7OMozQD8inWDLhMfdXfkGtr8LwYV+Cq9H0jy+V5yAYkC5wMwf/uIVTwfocPZ4wn0iQTj6l/JVInb6A1RsxfhSbHtU+AXYxVa5zi/KJFSExkaIiuKYdTTN6/4jRJuwld7SdJ+f4c8Vh481WqisJCF339lGcVbfoTGdk7JwRNj/rWJrzBCZelVJxohB9eMC5yG6HFWQTb3CwboR6trQ0BK/pcwQMx90UlA8LEdNrGziO8djZIYvT4SWoZEwTe7Wq6s++YNkjs0Jjca+nK0xbci10zgApDUhWhArBdF0hIjVK22Q3g0HizpiwzTohcQfvMyIgrUmXXPAIbFF6Zit57PxzNQn9zHjz+eyznlIh119TnnbRnY7rYL9BT1sEqmb4lpl/H5H4iSfvVLsXrhWu3tXAkBFV1mUcSznfnjUJvLLPVY/p8dc5k4Ux57pOhuhwaGUC2UVjPGWRZw3hvcnqVESOPw8PduP/RWRz6xRH5BgO6YKRvvRhMtTp5+K7CSxgpBuCUcN3Q== boidacarapreta@gmail.com
+write_files:
+  - path: /etc/modprobe.d/bonding.conf
+    permissions: 0644
+    owner: root
+    content: |
+      options bonding max_bonds=0
+  - path: /etc/systemd/network/10-en.network
+    permissions: 0644
+    owner: root
+    content: |
+      [Match]
+      Name=en*
+      [Network]
+      Bond=bond0
+  - path: /etc/systemd/network/20-bond0.netdev
+    permissions: 0644
+    owner: root
+    content: |
+      [NetDev]
+      Name=bond0
+      Kind=bond
+      [Bond]
+      Mode=802.3ad
+      MIIMonitorSec=1
+      LACPTransmitRate=fast
+      TransmitHashPolicy=802.3ad
+  - path: /etc/systemd/network/21-bond0.network
+    permissions: 0644
+    owner: root
+    content: |
+      [Match]
+      Name=bond0
+      [Network]
+      VLAN=vlan110
+      VLAN=vlan111
+      VLAN=vlan900
+  - path: /etc/systemd/network/30-vlan110.netdev
+    permissions: 0644
+    owner: root
+    content: |
+      [NetDev]
+      Name=vlan110
+      Kind=vlan
+      [VLAN]
+      Id=110
+  - path: /etc/systemd/network/31-vlan111.netdev
+    permissions: 0644
+    owner: root
+    content: |
+      [NetDev]
+      Name=vlan111
+      Kind=vlan
+      [VLAN]
+      Id=111
+  - path: /etc/systemd/network/32-vlan900.netdev
+    permissions: 0644
+    owner: root
+    content: |
+      [NetDev]
+      Name=vlan900
+      Kind=vlan
+      [VLAN]
+      Id=900
+  - path: /etc/systemd/network/40-vlan110-ip.network
+    permissions: 0644
+    owner: root
+    content: |
+      [Match]
+      Name=vlan110
+      [Network]
+      DNS=200.135.37.72
+      DNS=200.135.37.65
+      Address=172.18.110.100/24
+      Address=FC00:110::100/64
+      Gateway=172.18.110.254
+  - path: /etc/systemd/network/41-vlan111-ip.network
+    permissions: 0644
+    owner: root
+    content: |
+      [Match]
+      Name=vlan111
+      [Network]
+      Address=172.18.111.100/24
+      Address=FC00:111::100/64
+  - path: /etc/systemd/network/42-vlan900-ip.network
+    permissions: 0644
+    owner: root
+    content: |
+      [Match]
+      Name=vlan900
+      [Network]
+      Address=10.90.0.100/24
+      Address=FC00:900::100/64
+  - path: /etc/systemd/timesyncd.conf
+    permissions: 0644
+    owner: root
+    content: |
+      [Time]
+      NTP=pool.ntp.br ntp.ufsc.br ntp.cais.rnp.br
+coreos:
+  units:
+    - name: systemd-networkd.service
+      command: restart
+      enable: true
+    - name: settimezone.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=Set the time zone
+        Requires=network-online.target
+        After=network-online.target
+        [Service]
+        ExecStart=/usr/bin/timedatectl set-timezone America/Sao_Paulo
+        RemainAfterExit=yes
+        Type=oneshot
