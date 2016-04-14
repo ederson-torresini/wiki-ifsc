@@ -1,3 +1,0 @@
-CREATE DATABASE IF NOT EXISTS mediawiki;
-GRANT ALL PRIVILEGES ON mediawiki.* TO 'mediawiki'@'%' IDENTIFIED BY 'mediawiki';
-FLUSH PRIVILEGES;
