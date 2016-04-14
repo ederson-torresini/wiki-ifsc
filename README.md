@@ -11,3 +11,116 @@ A proposta deste projeto é rodar aplicações Web via [Kubernetes sobre CoreOS]
 - Alta disponibilidade.
 
 Para chegar até esse estado, o primeiro passo é a [instalação e configuração automatizada das máquinas físicas](https://github.com/coreos/coreos-baremetal/): do PXE à instalação do sistema operacional (CoreOS) e serviços básicos.
+
+# Rede
+Conforme as políticas de VLAN do IFSC, a rede está dividida em 3 redes virtuais para atender ao cenário:
+- 110: acesso externo às aplicações Web.
+- 111: instalação, configuração e aglomeração (_cluster_) das máquinas físicas, o que inclui [PXE](https://coreos.com/os/docs/latest/booting-with-pxe.html), [iPXE](https://coreos.com/os/docs/latest/booting-with-ipxe.html), [DHCP](https://github.com/coreos/coreos-baremetal/tree/master/contrib/dnsmasq), [bootcfg](https://github.com/coreos/coreos-baremetal/blob/master/Documentation/bootcfg.md) e [etcd](https://coreos.com/etcd).
+- 900: acesso externo às máquinas físicas, o que inclui [Intel IPMI](http://www.intel.com/content/www/us/en/servers/ipmi/ipmi-home.html), [IBM IMM](https://lenovopress.com/tips0849), [HP iLO](http://www.hp.com/go/iLO/docs), [Dell iDRAC](http://www.dell.com/learn/us/en/555/solutions/integrated-dell-remote-access-controller-idrac) e SSH.
+
+Temporariamente, há um switch Cisco Catalyst 2960 interligando todas as máquinas físicas. Como aquele não permite alternância de bonding/EtherChannel na mesma porta (com ou sem LACP), a solução adotada é de utilizar:
+- Primeira máquina, `coreos-0`, com todas as [interfaces agregadas](https://coreos.com/ignition/docs/latest/network-configuration.html#bonded-nics), uma vez que é o servidor DHCP e bootcfg.
+- Para toas as outras máquinas: a primeira interface de rede para a VLAN 111 e demais interfaces agregadas para VLANs 110 e 900.
+
+Para o ambiente de produção, esperam-se 10 máquinas físicas. Por enquanto, estão alocadas para o projeto 4 máquinas físicas. Assim, a configuração do switch está assim definida:
+- Máquina `coreos-0`: interfaces `GigabitEthernet0/1` e `0/2` agregadas (`Port-Channel1`) e VLANs etiquetadas (_ tagged VLANs_) 110, 111 e 900.
+```
+interface Port-channel1
+    description coreos-0
+    switchport trunk allowed vlan 110,111,900
+    switchport mode trunk
+!
+interface GigabitEthernet0/1
+    description coreos-0 - COM PROBLEMA
+    switchport trunk allowed vlan 110,111,900
+    switchport mode trunk
+    channel-group 1 mode active
+    shutdown
+!
+interface GigabitEthernet0/2
+    description coreos-0
+    switchport trunk allowed vlan 110,111,900
+    switchport mode trunk
+    channel-group 1 mode active
+```
+- Máquina `coreos-1`: interface `GigabitEthernet0/3` com VLAN 111 não etiquetada (_untagged VLAN_), e interfaces `GigabitEthernet0/4` e `0/5` agregadas (`Port-Channel2`) e VLANs etiquetadas 110 e 900.
+```
+interface Port-channel2
+    description coreos-1
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+!
+interface GigabitEthernet0/3
+    description coreos-1
+    switchport access vlan 111
+    switchport mode access
+    spanning-tree portfast
+!
+interface GigabitEthernet0/4
+    description coreos-1
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+    channel-group 2 mode active
+!
+interface GigabitEthernet0/5
+    description coreos-1
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+    channel-group 2 mode active
+```
+- Máquina `coreos-2`: interface `GigabitEthernet0/6` com VLAN 111 não etiquetada (_untagged VLAN_), e interfaces `GigabitEthernet0/7` e `0/8` agregadas (`Port-Channel3`) e VLANs etiquetadas 110 e 900.
+```
+interface Port-channel3
+    description coreos-2
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+!
+interface GigabitEthernet0/6
+    description coreos-2
+    switchport access vlan 111
+    switchport mode access
+    spanning-tree portfast
+!
+interface GigabitEthernet0/7
+    description coreos-2
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+    channel-group 3 mode active
+!
+interface GigabitEthernet0/8
+    description coreos-2
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+    channel-group 3 mode active
+```
+- Máquina `coreos-3`: interface `GigabitEthernet0/9` com VLAN 111 não etiquetada (_untagged VLAN_), e interfaces `GigabitEthernet0/10` e `0/11` agregadas (`Port-Channel4`) e VLANs etiquetadas 110 e 900.
+```
+interface Port-channel4
+    description coreos-3
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+!
+interface GigabitEthernet0/9
+    description coreos-3
+    switchport access vlan 111
+    switchport mode access
+    spanning-tree portfast
+!
+interface GigabitEthernet0/10
+    description coreos-3
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+    channel-group 3 mode active
+!
+interface GigabitEthernet0/11
+    description coreos-3
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+    channel-group 3 mode active
+```
+Por fim, a interface de conexão com a rede do câmpus (_uplink_). A interface `GigabitEthernet0/24` e VLANs etiquetadas 110 e 900:
+```
+interface GigabitEthernet0/24
+    switchport trunk allowed vlan 110,900
+    switchport mode trunk
+```
