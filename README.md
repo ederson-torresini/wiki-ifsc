@@ -130,3 +130,20 @@ Em `coreos-0`, foi [iniciado o CoreOS](https://coreos.com/os/docs/latest/booting
 - Minha chave pública para acesso via SSH.
 - Configuração das interfaces de rede, incluindo agregada e VLANs.
 - Sincronização de reógio por NTP.
+
+Essa máquina é o servidor DHCP/PXE/iPXE e bootcfg para [provisionamento das outras máquinas](https://github.com/coreos/coreos-baremetal), cujos serviços estão implementados (por enquanto) com Docker (e fortemente baseados no projeto [coreos-baremetal](https://github.com/coreos/coreos-baremetal)):
+- dnsmasq:
+```bash
+cd docker/dnsmasq
+chmod 0700 get-tftp-files
+./get-tftp-files
+docker run -d --restart=always --name=dnsmasq --net=host \
+--cap-add=NET_ADMIN -v ${PWD}/tftpboot:/var/lib/tftpboot:ro \
+quay.io/coreos/dnsmasq -d --log-queries --log-dhcp --interface=vlan111 \
+--enable-tftp --tftp-root=/var/lib/tftpboot \
+--dhcp-userclass=set:ipxe,iPXE \
+--dhcp-boot=tag:ipxe,http://172.18.111.100:8080/boot.ipxe \
+--dhcp-boot=tag:#ipxe,undionly.kpxe,172.18.111.100,172.18.111.100 \
+--dhcp-range=172.18.111.201,172.18.111.206 \
+--dhcp-option=3,172.18.111.100
+```
