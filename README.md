@@ -136,7 +136,7 @@ Em `coreos-0`, foi [iniciado o CoreOS](https://coreos.com/os/docs/latest/booting
 Essa máquina é o servidor DHCP/PXE/iPXE e bootcfg para [provisionamento das outras máquinas](https://github.com/coreos/coreos-baremetal), cujos serviços estão implementados (por enquanto) com Docker (e fortemente baseados no projeto [coreos-baremetal](https://github.com/coreos/coreos-baremetal)):
 - dnsmasq:
 ```bash
-cd docker/dnsmasq
+cd wiki-ifsc/docker/dnsmasq
 chmod 0700 get-tftp-files
 ./get-tftp-files
 docker run -d --restart=always --name=dnsmasq --net=host \
@@ -151,7 +151,7 @@ quay.io/coreos/dnsmasq -d --log-queries --log-dhcp --interface=vlan111 \
 ```
 - bootcfg:
 ```bash
-cd docker/bootcfg
+cd wiki-ifsc/docker/bootcfg
 chmod 0700 get-coreos
 ./get-coreos
 docker run -d --restart=always --name=bootcfg --net=host \
