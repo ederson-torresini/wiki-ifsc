@@ -131,3 +131,29 @@ coreos:
         ExecStart=/usr/bin/timedatectl set-timezone America/Sao_Paulo
         RemainAfterExit=yes
         Type=oneshot
+    - name: etcd2.service
+      command: restart
+      enable: true
+      content: |
+        [Unit]
+        Description=etcd2
+        Conflicts=etcd.service
+        Requires=network-online.target
+        After=network-online.target
+        [Service]
+        User=etcd
+        Type=notify
+        Environment=ETCD_DATA_DIR=/var/lib/etcd2
+        Environment=ETCD_NAME=%m
+        ExecStart=/usr/bin/etcd2
+        Restart=always
+        RestartSec=10s
+        LimitNOFILE=40000
+        TimeoutStartSec=0
+        Environment="ETCD_ADVERTISE_CLIENT_URLS=http://172.18.111.100:2379"
+        Environment="ETCD_INITIAL_ADVERTISE_PEER_URLS=http://172.18.111.100:2380"
+        Environment="ETCD_INITIAL_CLUSTER=coreos-0=http://172.18.111.100:2380"
+        Environment="ETCD_INITIAL_CLUSTER_STATE=new"
+        Environment="ETCD_LISTEN_CLIENT_URLS=http://172.18.111.100:2379,http://127.0.0.1:2379"
+        Environment="ETCD_LISTEN_PEER_URLS=http://172.18.111.100:2380"
+        Environment="ETCD_NAME=coreos-0"
