@@ -130,6 +130,7 @@ Em `coreos-0`, foi [iniciado o CoreOS](https://coreos.com/os/docs/latest/booting
 - Minha chave pública para acesso via SSH.
 - Configuração das interfaces de rede, incluindo agregada e VLANs.
 - Sincronização de reógio por NTP.
+- Roteamento e NAT para provisionamento.
 
 Essa máquina é o servidor DHCP/PXE/iPXE e bootcfg para [provisionamento das outras máquinas](https://github.com/coreos/coreos-baremetal), cujos serviços estão implementados (por enquanto) com Docker (e fortemente baseados no projeto [coreos-baremetal](https://github.com/coreos/coreos-baremetal)):
 - dnsmasq:
@@ -146,4 +147,23 @@ quay.io/coreos/dnsmasq -d --log-queries --log-dhcp --interface=vlan111 \
 --dhcp-boot=tag:#ipxe,undionly.kpxe,172.18.111.100,172.18.111.100 \
 --dhcp-range=172.18.111.201,172.18.111.206 \
 --dhcp-option=3,172.18.111.100
+```
+- bootcfg:
+```bash
+cd docker/bootcfg
+chmod 0700 get-coreos
+./get-coreos
+docker run -d --restart=always --name=bootcfg --net=host \
+-v ${PWD}/data:/data:Z -v ${PWD}/assets:/assets:Z \
+quay.io/coreos/bootcfg \
+-address=0.0.0.0:8080 -log-level=debug --config /data/ifsc.yaml
+```
+
+Nota: antes de iniciar a máquina nova, deve-se adicionar, em `coreos-0`, a máquina nova à aglomeração:
+```
+etcdctl member add <nome_da_máquina> <peerURL>
+```
+Exemplo:
+```
+etcdctl member add coreos-1 http://172.18.111.101:2380
 ```

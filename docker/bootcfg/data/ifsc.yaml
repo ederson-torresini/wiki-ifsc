@@ -1,0 +1,26 @@
+---
+api_version: v1alpha1
+groups:
+  - name: "coreos-1"
+    spec: "ifsc"
+    require:
+      uuid: "4002723f-7f75-b601-b8e7-001a641f3a92"
+    metadata:
+      name: "coreos-1"
+      coreos_channel: "beta"
+      coreos_version: "991.2.0"
+      cloud_endpoint: "http://172.18.111.100:8080/cloud"
+      networkd_iface: "enp3s0"
+      networkd_bond: "ens2f*"
+      networkd_vlan110_ipv4: "172.18.110.101/24"
+      networkd_vlan110_ipv6: "FC00:110::101/64"
+      networkd_vlan111_ipv4: "172.18.111.101/24"
+      networkd_vlan111_ipv6: "FC00:111::101/64"
+      networkd_vlan900_ipv4: "172.18.90.101/24"
+      networkd_vlan900_ipv6: "FC00:900::101/64"
+      networkd_dns1: "200.135.37.72"
+      networkd_dns2: "200.135.37.65"
+      networkd_gw_vlan110: "172.18.110.254"
+      networkd_gw_vlan111: "172.18.111.100"
+      ssh_authorized_keys:
+        - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDm6baOg9AXEsNZCDwmIr32SEwfhoVvmT4WrsfMtJlPD5zfpGydC0oNbBtmB7DbwANSs79hCgsQw2SGgOumUQMPTCjdrK3DgpUuHZHnLbf/LdOvaM34HzVEwSJ8E24H3272ypdW9LxpNfDp3lwVv9UHQqc1pZ69nQkkEOq7OMozQD8inWDLhMfdXfkGtr8LwYV+Cq9H0jy+V5yAYkC5wMwf/uIVTwfocPZ4wn0iQTj6l/JVInb6A1RsxfhSbHtU+AXYxVa5zi/KJFSExkaIiuKYdTTN6/4jRJuwld7SdJ+f4c8Vh481WqisJCF339lGcVbfoTGdk7JwRNj/rWJrzBCZelVJxohB9eMC5yG6HFWQTb3CwboR6trQ0BK/pcwQMx90UlA8LEdNrGziO8djZIYvT4SWoZEwTe7Wq6s++YNkjs0Jjca+nK0xbci10zgApDUhWhArBdF0hIjVK22Q3g0HizpiwzTohcQfvMyIgrUmXXPAIbFF6Zit57PxzNQn9zHjz+eyznlIh119TnnbRnY7rYL9BT1sEqmb4lpl/H5H4iSfvVLsXrhWu3tXAkBFV1mUcSznfnjUJvLLPVY/p8dc5k4Ux57pOhuhwaGUC2UVjPGWRZw3hvcnqVESOPw8PduP/RWRz6xRH5BgO6YKRvvRhMtTp5+K7CSxgpBuCUcN3Q== boidacarapreta@gmail.com"
