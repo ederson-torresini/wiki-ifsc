@@ -131,7 +131,8 @@ Em `coreos-0`, foi [iniciado o CoreOS](https://coreos.com/os/docs/latest/booting
 - Configuração das interfaces de rede, incluindo agregada e VLANs.
 - Sincronização de reógio por NTP.
 - Roteamento e NAT para provisionamento.
-- Configuração do etcd2.
+- Configuração do etcd.
+- Configuração do flannel.
 
 Essa máquina é o servidor DHCP/PXE/iPXE e bootcfg para [provisionamento das outras máquinas](https://github.com/coreos/coreos-baremetal), cujos serviços estão implementados (por enquanto) com Docker (e fortemente baseados no projeto [coreos-baremetal](https://github.com/coreos/coreos-baremetal)):
 - dnsmasq:

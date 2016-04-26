@@ -138,3 +138,6 @@ coreos:
         Environment="ETCD_LISTEN_CLIENT_URLS={{.etcd2_listen_client_urls}}"
         Environment="ETCD_LISTEN_PEER_URLS={{.etcd2_listen_peer_urls}}"
         Environment="ETCD_NAME={{.name}}"
+    - name: flanneld.service
+      command: start
+      enable: true

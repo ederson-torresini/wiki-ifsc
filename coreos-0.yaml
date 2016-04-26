@@ -157,3 +157,11 @@ coreos:
         Environment="ETCD_LISTEN_CLIENT_URLS=http://172.18.111.100:2379,http://127.0.0.1:2379"
         Environment="ETCD_LISTEN_PEER_URLS=http://172.18.111.100:2380"
         Environment="ETCD_NAME=coreos-0"
+    - name: flanneld.service
+      command: start
+      enable: true
+      drop-ins:
+      - name: 50-network-config.conf
+        content: |
+          [Service]
+          ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.0.0.0/16" }'
