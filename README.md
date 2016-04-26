@@ -23,7 +23,7 @@ Temporariamente, há um switch Cisco Catalyst 2960 interligando todas as máquin
 - Para toas as outras máquinas: a primeira interface de rede para a VLAN 111 e demais interfaces agregadas para VLANs 110 e 900.
 
 Para o ambiente de produção, esperam-se 10 máquinas físicas. Por enquanto, estão alocadas para o projeto 4 máquinas físicas. Assim, a configuração do switch está assim definida:
-- Máquina `coreos-0`: interfaces `GigabitEthernet0/1` e `0/2` agregadas (`Port-Channel1`) e VLANs etiquetadas (_ tagged VLANs_) 110, 111 e 900.
+- Máquina `coreos-0`: interfaces `GigabitEthernet0/1` e `0/2` agregadas (`Port-Channel1`) e VLANs etiquetadas (_tagged VLANs_) 110, 111 e 900.
 ```
 interface Port-channel1
     description coreos-0
@@ -68,7 +68,7 @@ interface GigabitEthernet0/5
     switchport mode trunk
     channel-group 2 mode active
 ```
-- Máquina `coreos-2`: interface `GigabitEthernet0/6` com VLAN 111 não etiquetada (_untagged VLAN_), e interfaces `GigabitEthernet0/7` e `0/8` agregadas (`Port-Channel3`) e VLANs etiquetadas 110 e 900.
+- Máquina `coreos-2`: interface `GigabitEthernet0/6` com VLAN 111 não etiquetada, e interfaces `GigabitEthernet0/7` e `0/8` agregadas (`Port-Channel3`) e VLANs etiquetadas 110 e 900.
 ```
 interface Port-channel3
     description coreos-2
@@ -93,7 +93,7 @@ interface GigabitEthernet0/8
     switchport mode trunk
     channel-group 3 mode active
 ```
-- Máquina `coreos-3`: interface `GigabitEthernet0/9` com VLAN 111 não etiquetada (_untagged VLAN_), e interfaces `GigabitEthernet0/10` e `0/11` agregadas (`Port-Channel4`) e VLANs etiquetadas 110 e 900.
+- Máquina `coreos-3`: interface `GigabitEthernet0/9` com VLAN 111 não etiquetada, e interfaces `GigabitEthernet0/10` e `0/11` agregadas (`Port-Channel4`) e VLANs etiquetadas 110 e 900.
 ```
 interface Port-channel4
     description coreos-3
