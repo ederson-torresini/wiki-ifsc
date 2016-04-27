@@ -169,3 +169,16 @@ Exemplo:
 ```
 etcdctl member add coreos-1 http://172.18.111.101:2380
 ```
+
+# Contêineres
+Os contêineres nomeados `dnsmasq` e `bootcfg`, mencionados anteriormente e que são usados para o provisionamento das máquinas físicas, têm sua execução  manual por parte do administrador. Para as aplicações Web, o responsável  pela execução e manutenção dos _N_ contêineres é o [Kubernetes](http://kubernetes.io/).
+
+Para fins de documentação, estão abaixo listadas as [variáveis](https://coreos.com/kubernetes/docs/latest/getting-started.html) usadas neste cenário, considerando duas máquinas físicas já em operação (`coreos-0` e `coreos-1`):
+- MASTER_HOST: `172.18.110.100`
+- ETCD_ENDPOINTS:  `http://172.18.111.100:2380,http://172.18.111.101:2380`
+- POD_NETWORK: `10.0.0.0/16`
+- SERVICE_IP_RANGE: `10.1.0.0/16`
+- K8S_SERVICE_IP: `10.1.0.1`
+- DNS_SERVICE_IP: `10.1.0.2`
+
+No diretório `kubernetes` há o arquivo `Makefile` que auxilia a criação dos certificados necessários ao ambiente, conforme [documentação](https://coreos.com/kubernetes/docs/latest/openssl.html).
