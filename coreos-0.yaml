@@ -101,6 +101,12 @@ write_files:
     content: |
       [Time]
       NTP=pool.ntp.br ntp.ufsc.br ntp.cais.rnp.br
+  - path: /etc/flannel/options.env
+    permissions: 0644
+    owner: root
+    content: |
+      FLANNELD_IFACE=172.18.111.100
+      FLANNELD_ETCD_ENDPOINTS=http://172.18.111.100:2380,http://172.18.111.101:2380
 coreos:
   units:
     - name: systemd-networkd.service
@@ -152,7 +158,7 @@ coreos:
         TimeoutStartSec=0
         Environment="ETCD_ADVERTISE_CLIENT_URLS=http://172.18.111.100:2379"
         Environment="ETCD_INITIAL_ADVERTISE_PEER_URLS=http://172.18.111.100:2380"
-        Environment="ETCD_INITIAL_CLUSTER=coreos-0=http://172.18.111.100:2380"
+        Environment="ETCD_INITIAL_CLUSTER=coreos-0=http://172.18.111.100:2380,coreos-1=http://172.18.111.101:2380"
         Environment="ETCD_INITIAL_CLUSTER_STATE=new"
         Environment="ETCD_LISTEN_CLIENT_URLS=http://172.18.111.100:2379,http://127.0.0.1:2379"
         Environment="ETCD_LISTEN_PEER_URLS=http://172.18.111.100:2380"
@@ -161,6 +167,10 @@ coreos:
       command: start
       enable: true
       drop-ins:
+      - name: 40-ExecStartPre-symlink.conf
+        content: |
+          [Service]
+          ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
       - name: 50-network-config.conf
         content: |
           [Service]

@@ -161,15 +161,6 @@ quay.io/coreos/bootcfg \
 -address=0.0.0.0:8080 -log-level=debug --config /data/ifsc.yaml
 ```
 
-Nota: antes de iniciar a máquina nova, deve-se adicionar, em `coreos-0`, a máquina nova à aglomeração:
-```
-etcdctl member add <nome_da_máquina> <peerURL>
-```
-Exemplo:
-```
-etcdctl member add coreos-1 http://172.18.111.101:2380
-```
-
 # Contêineres
 Os contêineres nomeados `dnsmasq` e `bootcfg`, mencionados anteriormente e que são usados para o provisionamento das máquinas físicas, têm sua execução  manual por parte do administrador. Para as aplicações Web, o responsável  pela execução e manutenção dos _N_ contêineres é o [Kubernetes](http://kubernetes.io/).
 
