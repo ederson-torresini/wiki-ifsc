@@ -106,7 +106,7 @@ write_files:
     owner: root
     content: |
       FLANNELD_IFACE=172.18.111.100
-      FLANNELD_ETCD_ENDPOINTS=http://172.18.111.100:2380,http://172.18.111.101:2380
+      FLANNELD_ETCD_ENDPOINTS=http://172.18.111.100:2379,http://172.18.111.101:2379
 coreos:
   units:
     - name: systemd-networkd.service
@@ -175,3 +175,12 @@ coreos:
         content: |
           [Service]
           ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.0.0.0/16" }'
+    - name: docker.service
+      command: start
+      enable: true
+      drop-ins:
+      - name: 40-flannel.conf
+        content: |
+          [Unit]
+          #Requires=flanneld.service
+          After=flanneld.service
