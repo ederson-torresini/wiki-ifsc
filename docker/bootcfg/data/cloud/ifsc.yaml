@@ -100,7 +100,7 @@ write_files:
     owner: root
     content: |
       FLANNELD_IFACE={{.flannel_advertise_ip}}
-      FLANNELD_ETCD_ENDPOINTS={{.etcd2_initial_cluster}}
+      FLANNELD_ETCD_ENDPOINTS={{.flannel_etcd_endpoints}}
 coreos:
   units:
     - name: systemd-networkd.service
@@ -152,3 +152,12 @@ coreos:
         content: |
           [Service]
           ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
+    - name: docker.service
+      command: start
+      enable: true
+      drop-ins:
+      - name: 40-flannel.conf
+        content: |
+          [Unit]
+          Requires=flanneld.service
+          After=flanneld.service
