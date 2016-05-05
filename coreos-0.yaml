@@ -27,7 +27,7 @@ write_files:
       Mode=802.3ad
       MIIMonitorSec=1
       LACPTransmitRate=fast
-      TransmitHashPolicy=802.3ad
+      TransmitHashPolicy=layer2+3
   - path: /etc/systemd/network/21-bond0.network
     permissions: 0644
     owner: root
@@ -122,8 +122,8 @@ coreos:
         After=network-online.target
         [Service]
         ExecStart=/usr/sbin/sysctl -w net.ipv4.conf.all.forwarding=1
-        ExecStart=/usr/sbin/iptables -t nat -F
-        ExecStart=/usr/sbin/iptables -t nat -A POSTROUTING -s 172.18.111.0/24 -o vlan110 -j MASQUERADE
+        ExecStart=/usr/sbin/iptables -w -t nat -F -w
+        ExecStart=/usr/sbin/iptables -w -t nat -A POSTROUTING -s 172.18.111.0/24 -o vlan110 -j MASQUERADE
         Type=oneshot
     - name: settimezone.service
       command: start
@@ -138,7 +138,7 @@ coreos:
         RemainAfterExit=yes
         Type=oneshot
     - name: etcd2.service
-      command: restart
+      command: start
       enable: true
       content: |
         [Unit]
@@ -182,5 +182,9 @@ coreos:
       - name: 40-flannel.conf
         content: |
           [Unit]
-          #Requires=flanneld.service
+          Wants=flanneld.service
           After=flanneld.service
+          [Service]
+          ExecStartPre=/usr/bin/pidof flanneld
+          Restart=on-failure
+          RestartSec=5s

@@ -5,7 +5,7 @@
 # Copiado de https://github.com/coreos/coreos-baremetal/blob/master/scripts/get-coreos
 
 CHANNEL=${1:-"beta"}
-VERSION=${2:-"991.2.0"}
+VERSION=${2:-"1010.1.0"}
 DEST=${PWD}/assets/coreos/$VERSION
 
 echo "Downloading CoreOS kernel and initrd image assets"
