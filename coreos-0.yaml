@@ -158,7 +158,7 @@ coreos:
         TimeoutStartSec=0
         Environment="ETCD_ADVERTISE_CLIENT_URLS=http://172.18.111.100:2379"
         Environment="ETCD_INITIAL_ADVERTISE_PEER_URLS=http://172.18.111.100:2380"
-        Environment="ETCD_INITIAL_CLUSTER=coreos-0=http://172.18.111.100:2380,coreos-1=http://172.18.111.101:2380"
+        Environment="ETCD_INITIAL_CLUSTER=coreos-0=http://172.18.111.100:2380"
         Environment="ETCD_INITIAL_CLUSTER_STATE=new"
         Environment="ETCD_LISTEN_CLIENT_URLS=http://172.18.111.100:2379,http://127.0.0.1:2379"
         Environment="ETCD_LISTEN_PEER_URLS=http://172.18.111.100:2380"

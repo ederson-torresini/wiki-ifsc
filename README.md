@@ -15,7 +15,7 @@ Para chegar até esse estado, o primeiro passo é a [instalação e configuraç�
 # Rede
 Conforme as políticas de VLAN do IFSC, a rede está dividida em 3 redes virtuais para atender ao cenário:
 - 110: acesso externo às aplicações Web.
-- 111: instalação, configuração e aglomeração (_cluster_) das máquinas físicas, o que inclui [PXE](https://coreos.com/os/docs/latest/booting-with-pxe.html), [iPXE](https://coreos.com/os/docs/latest/booting-with-ipxe.html), [DHCP](https://github.com/coreos/coreos-baremetal/tree/master/contrib/dnsmasq), [bootcfg](https://github.com/coreos/coreos-baremetal/blob/master/Documentation/bootcfg.md) e [etcd](https://coreos.com/etcd).
+- 111: instalação, configuração e aglomerado (_cluster_) das máquinas físicas, o que inclui [PXE](https://coreos.com/os/docs/latest/booting-with-pxe.html), [iPXE](https://coreos.com/os/docs/latest/booting-with-ipxe.html), [DHCP](https://github.com/coreos/coreos-baremetal/tree/master/contrib/dnsmasq), [bootcfg](https://github.com/coreos/coreos-baremetal/blob/master/Documentation/bootcfg.md) e [etcd](https://coreos.com/etcd).
 - 900: acesso externo às máquinas físicas, o que inclui [Intel IPMI](http://www.intel.com/content/www/us/en/servers/ipmi/ipmi-home.html), [IBM IMM](https://lenovopress.com/tips0849), [HP iLO](http://www.hp.com/go/iLO/docs), [Dell iDRAC](http://www.dell.com/learn/us/en/555/solutions/integrated-dell-remote-access-controller-idrac) e SSH.
 
 Temporariamente, há um switch Cisco Catalyst 2960 interligando todas as máquinas físicas. Como aquele não permite alternância de bonding/EtherChannel na mesma porta (com ou sem LACP), a solução adotada é de utilizar:
@@ -159,6 +159,15 @@ docker run -d --restart=always --name=bootcfg --net=host \
 -v ${PWD}/data:/data:Z -v ${PWD}/assets:/assets:Z \
 quay.io/coreos/bootcfg \
 -address=0.0.0.0:8080 -log-level=debug --config /data/ifsc.yaml
+```
+
+Nota: antes de iniciar a máquina nova, em `coreos-0` deve-se adicionar aquela ao aglomerado:
+```
+etcdctl member add <nome_da_máquina> <peerURL>
+```
+Exemplo:
+```
+etcdctl member add coreos-1 http://172.18.111.101:2380
 ```
 
 # Contêineres

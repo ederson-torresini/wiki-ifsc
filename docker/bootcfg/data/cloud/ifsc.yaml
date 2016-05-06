@@ -140,7 +140,7 @@ coreos:
         Environment="ETCD_ADVERTISE_CLIENT_URLS={{.etcd2_advertise_client_urls}}"
         Environment="ETCD_INITIAL_ADVERTISE_PEER_URLS={{.etcd2_initial_advertise_peer_urls}}"
         Environment="ETCD_INITIAL_CLUSTER={{.etcd2_initial_cluster}}"
-        Environment="ETCD_INITIAL_CLUSTER_STATE=new"
+        Environment="ETCD_INITIAL_CLUSTER_STATE=existing"
         Environment="ETCD_LISTEN_CLIENT_URLS={{.etcd2_listen_client_urls}}"
         Environment="ETCD_LISTEN_PEER_URLS={{.etcd2_listen_peer_urls}}"
         Environment="ETCD_NAME={{.name}}"
