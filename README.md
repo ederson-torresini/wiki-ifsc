@@ -145,7 +145,7 @@ docker run -d --restart=always --name=dnsmasq --net=host \
 quay.io/coreos/dnsmasq -d --log-queries --log-dhcp --interface=vlan111 \
 --enable-tftp --tftp-root=/var/lib/tftpboot \
 --dhcp-userclass=set:ipxe,iPXE \
---dhcp-boot=tag:ipxe,http://172.18.111.100:8080/boot.ipxe \
+--dhcp-boot=tag:ipxe,http://172.18.111.100/boot.ipxe \
 --dhcp-boot=tag:#ipxe,undionly.kpxe,172.18.111.100,172.18.111.100 \
 --dhcp-range=172.18.111.201,172.18.111.206 \
 --dhcp-option=3,172.18.111.100
@@ -158,7 +158,7 @@ chmod 0700 get-coreos
 docker run -d --restart=always --name=bootcfg --net=host \
 -v ${PWD}/data:/data:Z -v ${PWD}/assets:/assets:Z \
 quay.io/coreos/bootcfg \
--address=0.0.0.0:8080 -log-level=debug --config /data/ifsc.yaml
+-address=0.0.0.0:80 -log-level=debug --config /data/ifsc.yaml
 ```
 
 Nota: antes de iniciar a máquina nova, em `coreos-0` deve-se adicionar aquela ao aglomerado:
@@ -180,5 +180,6 @@ Para fins de documentação, estão abaixo listadas as [variáveis](https://core
 - SERVICE_IP_RANGE: `10.1.0.0/16`
 - K8S_SERVICE_IP: `10.1.0.1`
 - DNS_SERVICE_IP: `10.1.0.2`
+- CLUSTER_DOMAIN: `ifsc-sj.local`
 
 No diretório `kubernetes` há o arquivo `Makefile` que auxilia a criação dos certificados necessários ao ambiente, conforme [documentação](https://coreos.com/kubernetes/docs/latest/openssl.html).

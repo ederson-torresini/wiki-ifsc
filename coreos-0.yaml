@@ -107,6 +107,80 @@ write_files:
     content: |
       FLANNELD_IFACE=172.18.111.100
       FLANNELD_ETCD_ENDPOINTS=http://172.18.111.100:2379,http://172.18.111.101:2379
+  - path: /etc/systemd/system/kubelet.service
+    permissions: 0644
+    owner: root
+    content: |
+      [Unit]
+      Description=Kubernetes Kubelet
+      Documentation=https://github.com/coreos/kubernetes
+      Documentation=https://quay.io/repository/coreos/hyperkube?tab=tags
+      [Service]
+      ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
+      Environment=KUBELET_VERSION=v1.2.3_coreos.cni.1
+      ExecStart=/usr/lib/coreos/kubelet-wrapper \
+      --api-servers=http://127.0.0.1:8080 \
+      --network-plugin-dir=/etc/kubernetes/cni/net.d \
+      --register-schedulable=false \
+      --allow-privileged=true \
+      --config=/etc/kubernetes/manifests \
+      --hostname-override=172.18.111.100 \
+      --cluster-dns=10.1.0.2 \
+      --cluster-domain=ifsc-sj.local
+      Restart=always
+      RestartSec=10
+      [Install]
+      WantedBy=multi-user.target
+  - path: /etc/kubernetes/manifests/kube-apiserver.yaml
+    permissions: 0644
+    owner: root
+    content: |
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: kube-apiserver
+        namespace: kube-system
+      spec:
+        hostNetwork: true
+        containers:
+        - name: kube-apiserver
+          image: quay.io/coreos/hyperkube:v1.2.3_coreos.cni.1
+          command:
+          - /hyperkube
+          - apiserver
+          - --bind-address=0.0.0.0
+          - --etcd-servers=http://172.18.111.100:2380,http://172.18.111.101:2380
+          - --allow-privileged=true
+          - --service-cluster-ip-range=10.1.0.0/16
+          - --secure-port=443
+          - --advertise-address=172.18.110.100
+          - --admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota
+          - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
+          - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+          - --client-ca-file=/etc/kubernetes/ssl/ca.pem
+          - --service-account-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+          - --runtime-config=extensions/v1beta1=true,extensions/v1beta1/thirdpartyresources=true
+          ports:
+          - containerPort: 443
+            hostPort: 443
+            name: https
+          - containerPort: 8080
+            hostPort: 8080
+            name: local
+          volumeMounts:
+          - mountPath: /etc/kubernetes/ssl
+            name: ssl-certs-kubernetes
+            readOnly: true
+          - mountPath: /etc/ssl/certs
+            name: ssl-certs-host
+            readOnly: true
+        volumes:
+        - hostPath:
+            path: /etc/kubernetes/ssl
+          name: ssl-certs-kubernetes
+        - hostPath:
+            path: /usr/share/ca-certificates
+          name: ssl-certs-host
 coreos:
   units:
     - name: systemd-networkd.service

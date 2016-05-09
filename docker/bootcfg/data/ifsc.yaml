@@ -9,7 +9,7 @@ groups:
       name: "coreos-1"
       coreos_channel: "beta"
       coreos_version: "1010.1.0"
-      cloud_endpoint: "http://172.18.111.100:8080/cloud"
+      cloud_endpoint: "http://172.18.111.100/cloud"
       networkd_iface: "enp3s0"
       networkd_bond: "ens2f0 ens2f1"
       networkd_vlan110_ipv4: "172.18.110.101/24"
