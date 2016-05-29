@@ -107,30 +107,6 @@ write_files:
     content: |
       FLANNELD_IFACE=172.18.111.100
       FLANNELD_ETCD_ENDPOINTS=http://172.18.111.100:2379,http://172.18.111.101:2379
-  - path: /etc/systemd/system/kubelet.service
-    permissions: 0644
-    owner: root
-    content: |
-      [Unit]
-      Description=Kubernetes Kubelet
-      Documentation=https://github.com/coreos/kubernetes
-      Documentation=https://quay.io/repository/coreos/hyperkube?tab=tags
-      [Service]
-      ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
-      Environment=KUBELET_VERSION=v1.2.3_coreos.cni.1
-      ExecStart=/usr/lib/coreos/kubelet-wrapper \
-      --api-servers=http://127.0.0.1:8080 \
-      --network-plugin-dir=/etc/kubernetes/cni/net.d \
-      --register-schedulable=false \
-      --allow-privileged=true \
-      --config=/etc/kubernetes/manifests \
-      --hostname-override=172.18.111.100 \
-      --cluster-dns=10.1.0.2 \
-      --cluster-domain=ifsc-sj.local
-      Restart=always
-      RestartSec=10
-      [Install]
-      WantedBy=multi-user.target
   - path: /etc/kubernetes/manifests/kube-apiserver.yaml
     permissions: 0644
     owner: root
@@ -153,7 +129,7 @@ write_files:
           - --allow-privileged=true
           - --service-cluster-ip-range=10.1.0.0/16
           - --secure-port=443
-          - --advertise-address=172.18.110.100
+          - --advertise-address=172.18.111.100
           - --admission-control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ServiceAccount,ResourceQuota
           - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
           - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
@@ -181,6 +157,152 @@ write_files:
         - hostPath:
             path: /usr/share/ca-certificates
           name: ssl-certs-host
+  - path: /etc/kubernetes/manifests/kube-proxy.yaml
+    permissions: 0644
+    owner: root
+    content: |
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: kube-proxy
+        namespace: kube-system
+      spec:
+        hostNetwork: true
+        containers:
+        - name: kube-proxy
+          image: quay.io/coreos/hyperkube:v1.2.3_coreos.cni.1
+          command:
+          - /hyperkube
+          - proxy
+          - --master=http://127.0.0.1:8080
+          - --proxy-mode=iptables
+          securityContext:
+            privileged: true
+          volumeMounts:
+          - mountPath: /etc/ssl/certs
+            name: ssl-certs-host
+            readOnly: true
+        volumes:
+        - hostPath:
+            path: /usr/share/ca-certificates
+          name: ssl-certs-host
+  - path: /etc/kubernetes/manifests/kube-controller-manager.yaml
+    permissions: 0644
+    owner: root
+    content: |
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: kube-controller-manager
+        namespace: kube-system
+      spec:
+        hostNetwork: true
+        containers:
+        - name: kube-controller-manager
+          image: quay.io/coreos/hyperkube:v1.2.3_coreos.cni.1
+          command:
+          - /hyperkube
+          - controller-manager
+          - --master=http://127.0.0.1:8080
+          - --leader-elect=true
+          - --service-account-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
+          - --root-ca-file=/etc/kubernetes/ssl/ca.pem
+          livenessProbe:
+            httpGet:
+              host: 127.0.0.1
+              path: /healthz
+              port: 10252
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+          volumeMounts:
+          - mountPath: /etc/kubernetes/ssl
+            name: ssl-certs-kubernetes
+            readOnly: true
+          - mountPath: /etc/ssl/certs
+            name: ssl-certs-host
+            readOnly: true
+        volumes:
+        - hostPath:
+            path: /etc/kubernetes/ssl
+          name: ssl-certs-kubernetes
+        - hostPath:
+            path: /usr/share/ca-certificates
+          name: ssl-certs-host
+  - path:  /etc/kubernetes/manifests/kube-scheduler.yaml
+    permissions: 0644
+    owner: root
+    content: |
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: kube-scheduler
+        namespace: kube-system
+      spec:
+        hostNetwork: true
+        containers:
+        - name: kube-scheduler
+          image: quay.io/coreos/hyperkube:v1.2.3_coreos.cni.1
+          command:
+          - /hyperkube
+          - scheduler
+          - --master=http://127.0.0.1:8080
+          - --leader-elect=true
+          livenessProbe:
+            httpGet:
+              host: 127.0.0.1
+              path: /healthz
+              port: 10251
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+  - path: /etc/kubernetes/manifests/policy-agent.yaml
+    permissions: 0644
+    owner: root
+    content: |
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: calico-policy-agent
+        namespace: calico-system
+      spec:
+        hostNetwork: true
+        containers:
+          # The Calico policy agent.
+          - name: k8s-policy-agent
+            image: calico/k8s-policy-agent:v0.1.4
+            env:
+              - name: ETCD_ENDPOINTS
+                value: "http://172.18.111.100:2379,http://172.18.111.101:2379"
+              - name: K8S_API
+                value: "http://127.0.0.1:8080"
+              - name: LEADER_ELECTION
+                value: "true"
+          # Leader election container used by the policy agent.
+          - name: leader-elector
+            image: quay.io/calico/leader-elector:v0.1.0
+            imagePullPolicy: IfNotPresent
+            args:
+              - "--election=calico-policy-election"
+              - "--election-namespace=calico-system"
+              - "--http=127.0.0.1:4040"
+  - path: /etc/kubernetes/cni/net.d/10-calico.conf
+    permissions: 0644
+    owner: root
+    content: |
+      {
+          "name": "calico",
+          "type": "flannel",
+          "delegate": {
+              "type": "calico",
+              "etcd_endpoints": "http://172.18.111.100:2379,http://172.18.111.101:2379",
+              "log_level": "none",
+              "log_level_stderr": "info",
+              "hostname": "172.18.111.100",
+              "policy": {
+                  "type": "k8s",
+                  "k8s_api_root": "http://127.0.0.1:8080/api/v1/"
+              }
+          }
+      }
 coreos:
   units:
     - name: systemd-networkd.service
@@ -248,7 +370,7 @@ coreos:
       - name: 50-network-config.conf
         content: |
           [Service]
-          ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{ "Network": "10.0.0.0/16" }'
+          ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{"Network":"10.0.0.0/16","Backend":{"Type":"vxlan"}}'
     - name: docker.service
       command: start
       enable: true
@@ -262,3 +384,59 @@ coreos:
           ExecStartPre=/usr/bin/pidof flanneld
           Restart=on-failure
           RestartSec=5s
+    - name: kubelet.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=Kubernetes Kubelet
+        Documentation=https://github.com/coreos/kubernetes
+        Documentation=https://quay.io/repository/coreos/hyperkube?tab=tags
+        [Service]
+        ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
+        ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/cni/net.d
+        # https://quay.io/repository/coreos/hyperkube?tag=latest&tab=tags
+        Environment=KUBELET_VERSION=v1.2.3_coreos.cni.1
+        ExecStart=/usr/lib/coreos/kubelet-wrapper \
+        --container-runtime=rkt \
+        --rkt-path=/usr/bin/rkt \
+        --rkt-stage1-image=/usr/lib64/rkt/stage1-images/stage1-fly.aci \
+        --api-servers=http://127.0.0.1:8080 \
+        --network-plugin-dir=/etc/kubernetes/cni/net.d \
+        --network-plugin=cni \
+        --register-schedulable=false \
+        --allow-privileged=true \
+        --config=/etc/kubernetes/manifests \
+        --hostname-override=172.18.111.100 \
+        --cluster-dns=10.1.0.2 \
+        --cluster-domain=ifsc-sj.local
+        Restart=always
+        RestartSec=10
+        [Install]
+        WantedBy=multi-user.target
+    - name: calico-node.service
+      command: start
+      enable: true
+      content: |
+        [Unit]
+        Description=Calico per-host agent
+        Requires=network-online.target
+        After=network-online.target
+        [Service]
+        Slice=machine.slice
+        Environment=CALICO_DISABLE_FILE_LOGGING=true
+        Environment=HOSTNAME=172.18.111.100
+        Environment=IP=172.18.111.100
+        Environment=FELIX_FELIXHOSTNAME=172.18.111.100
+        Environment=CALICO_NETWORKING=false
+        Environment=NO_DEFAULT_POOLS=true
+        Environment=ETCD_ENDPOINTS=http://172.18.111.100:2379,http://172.18.111.101:2379
+        ExecStart=/usr/bin/rkt run --inherit-env --stage1-from-dir=stage1-fly.aci \
+        --volume=modules,kind=host,source=/lib/modules,readOnly=false \
+        --mount=volume=modules,target=/lib/modules \
+        --trust-keys-from-https quay.io/calico/node:v0.19.0
+        KillMode=mixed
+        Restart=always
+        TimeoutStartSec=0
+        [Install]
+        WantedBy=multi-user.target
