@@ -31,6 +31,7 @@ Dessa forma, espera-se (em breve, espero) rodar as aplicações de interesse do 
 - [Mediawiki](https://www.mediawiki.org)
 - [Moodle](https://moodle.org)
 - [Wordpress](https://wordpress.org)
+- [ShareLaTeX](https://www.sharelatex.com)
 - [Owncloud](https://owncloud.org)
 - [GitLab](https://gitlab.com)
 - [Gerrit](https://www.gerritcodereview.com)

@@ -120,7 +120,7 @@ write_files:
         hostNetwork: true
         containers:
         - name: kube-apiserver
-          image: quay.io/coreos/hyperkube:v1.2.3_coreos.cni.1
+          image: quay.io/coreos/hyperkube:v1.2.4_coreos.1
           command:
           - /hyperkube
           - apiserver
@@ -170,7 +170,7 @@ write_files:
         hostNetwork: true
         containers:
         - name: kube-proxy
-          image: quay.io/coreos/hyperkube:v1.2.3_coreos.cni.1
+          image: quay.io/coreos/hyperkube:v1.2.4_coreos.1
           command:
           - /hyperkube
           - proxy
@@ -199,7 +199,7 @@ write_files:
         hostNetwork: true
         containers:
         - name: kube-controller-manager
-          image: quay.io/coreos/hyperkube:v1.2.3_coreos.cni.1
+          image: quay.io/coreos/hyperkube:v1.2.4_coreos.1
           command:
           - /hyperkube
           - controller-manager
@@ -241,7 +241,7 @@ write_files:
         hostNetwork: true
         containers:
         - name: kube-scheduler
-          image: quay.io/coreos/hyperkube:v1.2.3_coreos.cni.1
+          image: quay.io/coreos/hyperkube:v1.2.4_coreos.1
           command:
           - /hyperkube
           - scheduler
@@ -266,7 +266,6 @@ write_files:
       spec:
         hostNetwork: true
         containers:
-          # The Calico policy agent.
           - name: k8s-policy-agent
             image: calico/k8s-policy-agent:v0.1.4
             env:
@@ -276,7 +275,6 @@ write_files:
                 value: "http://127.0.0.1:8080"
               - name: LEADER_ELECTION
                 value: "true"
-          # Leader election container used by the policy agent.
           - name: leader-elector
             image: quay.io/calico/leader-elector:v0.1.0
             imagePullPolicy: IfNotPresent
@@ -378,12 +376,8 @@ coreos:
       - name: 40-flannel.conf
         content: |
           [Unit]
-          Wants=flanneld.service
+          Requires=flanneld.service
           After=flanneld.service
-          [Service]
-          ExecStartPre=/usr/bin/pidof flanneld
-          Restart=on-failure
-          RestartSec=5s
     - name: kubelet.service
       command: start
       enable: true
@@ -392,15 +386,13 @@ coreos:
         Description=Kubernetes Kubelet
         Documentation=https://github.com/coreos/kubernetes
         Documentation=https://quay.io/repository/coreos/hyperkube?tab=tags
+        Requires=docker.service
+        After=docker.service
         [Service]
         ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
         ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/cni/net.d
-        # https://quay.io/repository/coreos/hyperkube?tag=latest&tab=tags
-        Environment=KUBELET_VERSION=v1.2.3_coreos.cni.1
+        Environment=KUBELET_VERSION=v1.2.4_coreos.cni.1
         ExecStart=/usr/lib/coreos/kubelet-wrapper \
-        --container-runtime=rkt \
-        --rkt-path=/usr/bin/rkt \
-        --rkt-stage1-image=/usr/lib64/rkt/stage1-images/stage1-fly.aci \
         --api-servers=http://127.0.0.1:8080 \
         --network-plugin-dir=/etc/kubernetes/cni/net.d \
         --network-plugin=cni \
@@ -409,7 +401,7 @@ coreos:
         --config=/etc/kubernetes/manifests \
         --hostname-override=172.18.111.100 \
         --cluster-dns=10.1.0.2 \
-        --cluster-domain=ifsc-sj.local
+        --cluster-domain=cluster.local
         Restart=always
         RestartSec=10
         [Install]
