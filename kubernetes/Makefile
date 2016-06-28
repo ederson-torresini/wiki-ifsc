@@ -1,4 +1,4 @@
-all: clean ca api worker admin
+all: ca api worker admin
 
 clean:
 	rm -f *.key *.srl *.csr *.pem
@@ -12,17 +12,22 @@ api:
 	openssl req -new -key apiserver-key.pem -out apiserver.csr -subj "/CN=kube-apiserver" -config openssl-api.cnf
 	openssl x509 -req -in apiserver.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out apiserver.pem -days 365 -extensions v3_req -extfile openssl-api.cnf
 
-worker: worker-100 worker-101
+worker: worker-0 worker-1 worker-2
 
-worker-100:
+worker-0:
 	openssl genrsa -out coreos-0-worker-key.pem 2048
-	WORKER_IP="172.18.110.100" openssl req -new -key coreos-0-worker-key.pem -out coreos-0-worker.csr -subj "/CN=coreos-0" -config openssl-worker.cnf
-	WORKER_IP="172.18.110.100" openssl x509 -req -in coreos-0-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out coreos-0-worker.pem -days 365 -extensions v3_req -extfile openssl-worker.cnf
+	WORKER_IP="200.135.37.93" openssl req -new -key coreos-0-worker-key.pem -out coreos-0-worker.csr -subj "/CN=coreos-0" -config openssl-worker.cnf
+	WORKER_IP="200.135.37.93" openssl x509 -req -in coreos-0-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out coreos-0-worker.pem -days 365 -extensions v3_req -extfile openssl-worker.cnf
 
-worker-101:
+worker-1:
 	openssl genrsa -out coreos-1-worker-key.pem 2048
-	WORKER_IP="172.18.110.101" openssl req -new -key coreos-1-worker-key.pem -out coreos-1-worker.csr -subj "/CN=coreos-1" -config openssl-worker.cnf
-	WORKER_IP="172.18.110.101" openssl x509 -req -in coreos-1-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out coreos-1-worker.pem -days 365 -extensions v3_req -extfile openssl-worker.cnf
+	WORKER_IP="200.135.37.94" openssl req -new -key coreos-1-worker-key.pem -out coreos-1-worker.csr -subj "/CN=coreos-1" -config openssl-worker.cnf
+	WORKER_IP="200.135.37.94" openssl x509 -req -in coreos-1-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out coreos-1-worker.pem -days 365 -extensions v3_req -extfile openssl-worker.cnf
+
+worker-2:
+	openssl genrsa -out coreos-2-worker-key.pem 2048
+	WORKER_IP="200.135.37.95" openssl req -new -key coreos-2-worker-key.pem -out coreos-2-worker.csr -subj "/CN=coreos-2" -config openssl-worker.cnf
+	WORKER_IP="200.135.37.95" openssl x509 -req -in coreos-2-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out coreos-2-worker.pem -days 365 -extensions v3_req -extfile openssl-worker.cnf
 
 admin:
 	openssl genrsa -out admin-key.pem 2048
