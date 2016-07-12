@@ -8,7 +8,7 @@ write_files:
     owner: root
     content: |
       127.0.0.1 localhost
-      200.135.37.93 coreos-0
+      200.135.37.93 coreos-0 kube-controller kube-apiserver
       200.135.37.94 coreos-1
       200.135.37.95 coreos-2
   - path: /etc/systemd/network/eno-ip.network
@@ -34,6 +34,67 @@ write_files:
     content: |
       FLANNELD_IFACE=200.135.37.95
       FLANNELD_ETCD_ENDPOINTS=http://200.135.37.93:2379,http://200.135.37.94:2379,http://200.135.37.95:2379
+  - path: /etc/kubernetes/manifests/kube-proxy.yaml
+    owner: root
+    permissions: 0644
+    content: |
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: kube-proxy
+      spec:
+        hostNetwork: true
+        containers:
+        - name: kube-proxy
+          image: gcr.io/google_containers/hyperkube:v1.3.0
+          command:
+          - /hyperkube
+          - proxy
+          - --master=https://200.135.37.93:443
+          - --kubeconfig=/etc/kubernetes/worker-kubeconfig.yaml
+          - --proxy-mode=iptables
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - mountPath: /etc/ssl/certs
+              name: "ssl-certs"
+            - mountPath: /etc/kubernetes/worker-kubeconfig.yaml
+              name: "kubeconfig"
+              readOnly: true
+            - mountPath: /etc/kubernetes/ssl
+              name: "etc-kube-ssl"
+              readOnly: true
+        volumes:
+          - name: "ssl-certs"
+            hostPath:
+              path: "/usr/share/ca-certificates"
+          - name: "kubeconfig"
+            hostPath:
+              path: "/etc/kubernetes/worker-kubeconfig.yaml"
+          - name: "etc-kube-ssl"
+            hostPath:
+              path: "/etc/kubernetes/ssl"
+  - path: /etc/kubernetes/worker-kubeconfig.yaml
+    owner: root
+    permissions: 0644
+    content: |
+      apiVersion: v1
+      kind: Config
+      clusters:
+      - name: local
+        cluster:
+          certificate-authority: /etc/kubernetes/ssl/ca.pem
+      users:
+      - name: kubelet
+        user:
+          client-certificate: /etc/kubernetes/ssl/coreos-2-worker.pem
+          client-key: /etc/kubernetes/ssl/coreos-2-worker-key.pem
+      contexts:
+      - context:
+          cluster: local
+          user: kubelet
+        name: kubelet-context
+      current-context: kubelet-context
 coreos:
   units:
     - name: systemd-networkd.service
@@ -82,3 +143,39 @@ coreos:
           [Unit]
           Requires=flanneld.service
           After=flanneld.service
+    - name: kubelet.service
+      runtime: true
+      command: start
+      content: |
+        [Unit]
+        Description=Kubernetes Kubelet
+        Documentation=https://github.com/kubernetes/kubernetes
+        Documentation=https://github.com/coreos/kubernetes
+        Documentation=http://kubernetes.io/docs/getting-started-guides/coreos/bare_metal_calico/
+        Requires=docker.service
+        After=docker.service
+        [Service]
+        ExecStartPre=/usr/bin/mkdir -p /opt/bin
+        ExecStartPre=/usr/bin/curl http://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kubelet -o /opt/bin/kubelet
+        ExecStartPre=/usr/bin/curl http://storage.googleapis.com/kubernetes-release/release/v1.3.0/bin/linux/amd64/kubectl -o /opt/bin/kubectl
+        ExecStartPre=/usr/bin/chmod 0755 /opt/bin/kubelet /opt/bin/kubectl
+        ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/addons
+        ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
+        ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/ssl
+        ExecStart=/opt/bin/kubelet \
+        --port=10250 \
+        --address=0.0.0.0 \
+        --allow-privileged=true \
+        --cluster-dns=10.1.0.2 \
+        --cluster-domain=ifsc-sj.local \
+        --config=/etc/kubernetes/manifests \
+        --hostname-override=coreos-2 \
+        --api-servers=https://200.135.37.93:443 \
+        --kubeconfig=/etc/kubernetes/worker-kubeconfig.yaml \
+        --tls-private-key-file=/etc/kubernetes/ssl/coreos-2-worker-key.pem \
+        --tls-cert-file=/etc/kubernetes/ssl/coreos-2-worker.pem \
+        --logtostderr=true
+        Restart=always
+        RestartSec=10
+        [Install]
+        WantedBy=multi-user.target

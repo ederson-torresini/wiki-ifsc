@@ -8,7 +8,7 @@ write_files:
     owner: root
     content: |
       127.0.0.1 localhost
-      200.135.37.93 coreos-0
+      200.135.37.93 coreos-0 kube-controller kube-apiserver
       200.135.37.94 coreos-1
       200.135.37.95 coreos-2
   - path: /etc/systemd/network/eno-ip.network
@@ -204,6 +204,7 @@ coreos:
       content: |
         [Unit]
         Description=Kubernetes Kubelet
+        Documentation=https://github.com/kubernetes/kubernetes
         Documentation=https://github.com/coreos/kubernetes
         Documentation=http://kubernetes.io/docs/getting-started-guides/coreos/bare_metal_calico/
         Requires=docker.service
@@ -220,6 +221,7 @@ coreos:
         --register-node=false \
         --allow-privileged=true \
         --config=/etc/kubernetes/manifests \
+        --hostname-override=coreos-0 \
         --cluster-dns=10.1.0.2 \
         --cluster_domain=ifsc-sj.local \
         --logtostderr=true
