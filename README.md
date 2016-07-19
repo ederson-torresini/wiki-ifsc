@@ -58,6 +58,6 @@ Para fins de documentação, estão abaixo listadas as [variáveis](https://core
 - SERVICE_IP_RANGE: `10.1.0.0/16`
 - K8S_SERVICE_IP: `10.1.0.1`
 - DNS_SERVICE_IP: `10.1.0.2`
-- CLUSTER_DOMAIN: `ifsc-sj.local`
+- CLUSTER_DOMAIN: `cluster.local`
 
-No diretório `kubernetes` há o arquivo `Makefile` que auxilia a criação dos certificados necessários ao ambiente, conforme [documentação](https://coreos.com/kubernetes/docs/latest/openssl.html).
+No diretório `certs` há o arquivo `Makefile` que auxilia a criação dos certificados necessários ao ambiente, conforme [documentação](https://coreos.com/kubernetes/docs/latest/openssl.html).

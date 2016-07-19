@@ -1,0 +1,36 @@
+# http://kubernetes.io/docs/user-guide/deployments/
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+---
+# http://kubernetes.io/docs/user-guide/services/#defining-a-service
+# http://docs.openstack.org/developer/magnum/dev/dev-kubernetes-load-balancer.html
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx
+spec:
+  externalIPs:
+    - 200.135.37.94
+    - 200.135.37.95
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    app: nginx
+  type: LoadBalancer

@@ -11,12 +11,12 @@ write_files:
       200.135.37.93 coreos-0 kube-controller kube-apiserver
       200.135.37.94 coreos-1
       200.135.37.95 coreos-2
-  - path: /etc/systemd/network/eno-ip.network
+  - path: /etc/systemd/network/en-ip.network
     permissions: 0644
     owner: root
     content: |
       [Match]
-      Name=eno*
+      Name=en*
       [Network]
       DNS=200.135.37.72
       DNS=200.135.37.65
@@ -168,7 +168,7 @@ coreos:
         --register-node=true \
         --allow-privileged=true \
         --cluster-dns=10.1.0.2 \
-        --cluster-domain=ifsc-sj.local \
+        --cluster-domain=cluster.local \
         --config=/etc/kubernetes/manifests \
         --hostname-override=coreos-1 \
         --api-servers=https://200.135.37.93:443 \

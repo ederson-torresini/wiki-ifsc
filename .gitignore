@@ -6,3 +6,4 @@ tftpboot/
 *.srl
 *.csr
 *.pem
+*.p12
