@@ -4,9 +4,11 @@ kind: Service
 apiVersion: v1
 metadata:
   name: nginx
-  phase: test
-  tier: frontend
-  version: v0.1
+  labels:
+    app: nginx
+    phase: test
+    tier: frontend
+    version: v0.1
 spec:
   ports:
     - name: http

@@ -165,6 +165,7 @@ coreos:
         ExecStart=/opt/bin/kubelet \
         --port=10250 \
         --address=0.0.0.0 \
+        --register-node=true \
         --allow-privileged=true \
         --cluster-dns=10.1.0.2 \
         --cluster-domain=cluster.local \
