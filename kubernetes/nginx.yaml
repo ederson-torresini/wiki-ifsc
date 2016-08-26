@@ -1,25 +1,26 @@
-# http://kubernetes.io/docs/user-guide/services/#defining-a-service
-# http://docs.openstack.org/developer/magnum/dev/dev-kubernetes-load-balancer.html
-kind: Service
 apiVersion: v1
+kind: Service
 metadata:
-  name: nginx
+  externalIPs:
+    - "200.135.37.94"
+    - "200.135.37.95"
   labels:
     app: nginx
     phase: test
     tier: frontend
     version: v0.1
+  name: nginx
 spec:
   ports:
-    - name: http
-      protocol: TCP
+    -
+      name: http
       port: 80
+      protocol: TCP
       targetPort: 80
   selector:
     app: nginx
   type: LoadBalancer
 ---
-# http://kubernetes.io/docs/user-guide/deployments/
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -35,13 +36,15 @@ spec:
         version: v0.1
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.11.1
-        livenessProbe:
-              httpGet:
-                path: /
-                port: 80
-              initialDelaySeconds: 30
-              timeoutSeconds: 1
-        ports:
-        - containerPort: 80
+        -
+          image: "docker.io/nginx:1.11.1"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+          name: nginx
+          ports:
+            -
+              containerPort: 80
