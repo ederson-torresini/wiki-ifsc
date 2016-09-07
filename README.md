@@ -50,7 +50,7 @@ Nas máquinas `coreos-0`, `coreos-1` e `coreos-2`, foi [iniciado o CoreOS](https
 - Sincronização de relógio por NTP.
 - Rede virtual para os contêineres usando [VXLAN](https://tools.ietf.org/html/rfc7348).
 
-# Contêineres
+# Kubernetes
 Para fins de documentação, estão abaixo listadas as [variáveis](https://coreos.com/kubernetes/docs/latest/getting-started.html) usadas neste cenário, considerando 3 máquinas já em operação (`coreos-0`, `coreos-1` e `coreos-2`):
 - MASTER_HOST: `200.135.37.93`
 - ETCD_ENDPOINTS:  `http://200.135.37.93:2380,http://200.135.37.94:2380,http://200.135.37.95:2380`
@@ -61,3 +61,16 @@ Para fins de documentação, estão abaixo listadas as [variáveis](https://core
 - CLUSTER_DOMAIN: `cluster.local`
 
 No diretório `certs` há o arquivo `Makefile` que auxilia a criação dos certificados necessários ao ambiente, conforme [documentação](https://coreos.com/kubernetes/docs/latest/openssl.html).
+
+# Contêineres
+As seguintes imagens estão em fase de teste para rodar sobre Kubernetes:
+- [Gluster](https://hub.docker.com/r/boidacarapreta/gluster/): imagem particular.
+
+    [![](https://images.microbadger.com/badges/image/boidacarapreta/gluster.svg)](http://microbadger.com/images/boidacarapreta/gluster "Get your own image badge on microbadger.com")
+
+    [![](https://images.microbadger.com/badges/version/boidacarapreta/gluster.svg)](http://microbadger.com/images/boidacarapreta/gluster "Get your own version badge on microbadger.com")
+- [NGINX](https://hub.docker.com/_/nginx/): repositório oficial.
+
+    [![](https://images.microbadger.com/badges/image/nginx.svg)](http://microbadger.com/images/nginx "Get your own image badge on microbadger.com")
+
+    [![](https://images.microbadger.com/badges/version/nginx.svg)](http://microbadger.com/images/nginx "Get your own version badge on microbadger.com")
