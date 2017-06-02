@@ -1,9 +1,7 @@
 wiki-ifsc
 =========
-Tudo que tem um início tem um fim. Por um ano e meio, estudei novas tecnologias e implementações para oferecer uma solução utilizando contêineres.
+Tudo que tem um início tem um fim. Por um ano e meio, pesquisei tecnologias e implementações para oferecer uma solução confiável e fácil de implantar e, principalmente, manter aplicações Web.
 
-Assim como outro projeto, com [OpenStack](https://github.com/boidacarapreta/openstack-ifsc), 
+Nesse meio tempo, entrei em contato com a equipe de TI do IFSC câmpus São José, que tinha suas próprias demandas e ferramentas - várias delas já [previstas neste projeto](https://github.com/boidacarapreta/wiki-ifsc/blob/master/README-antigo.md).
 
-Along this time, what I had notice is that most people just want a service running on the net, not a whole virtual machine to maintain. Of course, my first choice was [Magnum](https://wiki.openstack.org/wiki/Magnum), but it showed to me too complex to keep up (and too many layers).
-
-Now, it's time to rethink. So, I decided to join forces with my campus IT staff, and build a new cloud - a container cloud -, now using [Container Linux](https://github.com/ctic-sje-ifsc/coreos) and [Kubernetes](https://github.com/ctic-sje-ifsc/kubernetes).
+Assim, unimos os esforços para projetar e implantar uma solução completa de automatização de servidores e computadores terminais. Este projeto, bem como [openstack-ifsc](https://github.com/boidacarapreta/openstack-ifsc), foi encerrado em favor de outros novos, interligados entre si: https://github.com/ctic-sje-ifsc.
